@@ -20,7 +20,7 @@ struct NoteDuration{
  */
 class Melody{
 public:
-  Melody(int pin = -1): nNotes(0), tempo(0){};
+  Melody(int pin = -1): pin(pin), nNotes(0), tempo(0){};
 
   /**
    * Load just 3 notes, to test the buzzer,

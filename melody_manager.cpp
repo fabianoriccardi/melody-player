@@ -166,9 +166,11 @@ bool Melody::isPlaying(){
 
 bool Melody::checkReadyness(){
   if(pin==-1){
+    Serial.println("Cannot play the melody, have you set the pin?");
     return false;
   }
   if(nNotes<1){
+    Serial.println("Cannot play the melody, was the file loaded corretly or is the format wrong?");
     return false;
   }
   return true;
