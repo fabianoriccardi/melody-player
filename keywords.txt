@@ -1,0 +1,5 @@
+Melody				KEYWORD1
+playAsync			KEYWORD2
+playSync			KEYWORD2
+isPlaying			KEYWORD2
+load				KEYWORD2
