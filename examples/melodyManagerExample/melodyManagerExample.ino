@@ -1,6 +1,10 @@
 #include <melody_manager.h>
 
+#ifdef ESP8266
 int buzzerPin = D6;
+#else
+int buzzerPin = 14;
+#endif
 
 String melodyFilePath = "/melody2.txt";
 

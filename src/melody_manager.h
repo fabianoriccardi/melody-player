@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <FS.h>
+#ifdef ESP32
+#include <SPIFFS.h>
+#endif
 
 #include "pitches_unordered_map.h"
 
@@ -16,7 +19,14 @@ struct NoteDuration{
 };
 
 /**
- * This class aims to manage the melody in term of memory/storage and playing
+ * This class aims to manage the melody in term of memory/storage and playing.
+ * 
+ * The general idea is providing a simple library to manage the melodies. These can be stored
+ * on the flash memory to decouple the code from the data. This allows to change the melody
+ * without a new compilation. The melody file format is very trivial and not efficient: 
+ * in fact, all the data are stored in a human readable way. Still, this format doesn't
+ * aim to compete with MIDI format, because it doesn't support multiple streaming nor 
+ * precise timestamp (just to make a couple of example). 
  */
 class Melody{
 public:
@@ -77,6 +87,8 @@ private:
   int nNotes;
   int maxLength = 1000;
   int tempo;
+  int channel = 0;
+  
   /**
    * 0, never played
    * 1, playing
@@ -93,6 +105,8 @@ private:
    *  - the pin is set
    */
   bool checkReadyness();
+
+  void setupPin();
 };
 
 #endif

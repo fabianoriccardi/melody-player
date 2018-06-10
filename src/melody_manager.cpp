@@ -130,30 +130,69 @@ void Melody::playSync(){
   if(!checkReadyness()){
     return;
   }
+
+  setupPin();
+
+  state=1;
   for(int i=0;i<nNotes;i++){
     if(debug) Serial.println(String("Playing: freq=") + nd[i].frequency + " dur=" + nd[i].duration);
+#ifdef ESP32
+    ledcWriteTone(channel, nd[i].frequency);
+    delay(tempo*nd[i].duration);
+    ledcWriteTone(channel, 0);
+    delay(0.30f * (tempo*nd[i].duration));
+#else
     tone(pin,nd[i].frequency,tempo*nd[i].duration);
     delay(1.30f * (tempo*nd[i].duration));
+#endif
   }
+  state=2;
+#ifdef ESP32
+  ledcWrite(channel, 0);
+  ledcDetachPin(pin);
+#endif
+  pinMode(pin,OUTPUT);
+  digitalWrite(pin,HIGH);
 }
 
 static Ticker ticker; 
 
+/**
+ * NOTE: this is the function executed in the Ticker, aka the Thread on ESP* platform.
+ * So you can decide to put delay(..) function without blocking the others threads 
+ * (e.g. the loop() function) instead of using the slightly complicated ticker.attach(..)
+ * to delay a certain operation. Below you can see a mix between the 2 approaches
+ */
 void changeFreq(Melody* melody){
   static int i=0;
   if(i<melody->nNotes){
     if(melody->debug) Serial.println(String("Playing async: freq=") + melody->nd[i].frequency + " dur=" + melody->nd[i].duration + " iteration=" + i);
+#ifdef ESP32
+    ledcWriteTone(melody->channel, melody->nd[i].frequency);
+    delay(melody->tempo*melody->nd[i].duration);
+    ledcWriteTone(melody->channel, 0);
+    ticker.once_ms(0.30f*melody->nd[i].duration*melody->tempo,changeFreq,melody);
+#else
     tone(melody->pin,melody->nd[i].frequency,melody->tempo*melody->nd[i].duration);
     ticker.once_ms(1.30f*melody->nd[i].duration*melody->tempo,changeFreq,melody);
+#endif
     i++;
   }else{
     i=0;
     melody->state=2;
+#ifdef ESP32
+    ledcWrite(melody->channel, 0);
+    ledcDetachPin(melody->pin);
+    // Need to avoid to waste energy: the buzzer will consume energy if turned "active"
+    pinMode(melody->pin,OUTPUT);
+    digitalWrite(melody->pin,HIGH);
+#endif
   }
 }
 
 void Melody::playAsync(){
   state=1;
+  setupPin();
   ticker.once(0,changeFreq,this);
 }
 
@@ -176,3 +215,12 @@ bool Melody::checkReadyness(){
   return true;
 }
 
+void Melody::setupPin(){
+#ifdef ESP32
+  int resolution = 8;
+  // 2000 is a frequency, it will be change at the first play
+  ledcSetup(channel, 2000, resolution);
+  ledcAttachPin(pin, channel);
+  ledcWrite(channel, 125);
+#endif
+}
