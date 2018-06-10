@@ -1,0 +1,5 @@
+title=Bip
+tempo=200
+length=1
+format=integer
+3000,3

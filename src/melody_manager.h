@@ -30,7 +30,10 @@ struct NoteDuration{
  */
 class Melody{
 public:
-  Melody(int pin = -1): pin(pin), nNotes(0), tempo(0){};
+  Melody(int pin): pin(pin), nNotes(0), tempo(0){
+  	pinMode(pin,OUTPUT);
+  	digitalWrite(pin,HIGH);
+  };
 
   /**
    * Load just 3 notes, to test the buzzer,
@@ -60,10 +63,6 @@ public:
     this->tempo=tempo;
   };
 
-  void setPin(int pin){
-    this->pin=pin;
-  }
-
   /**
    * Play the melody in a synchrounus (blocking) way.
    */
@@ -81,7 +80,7 @@ public:
     bool isPlaying();
   
 private:
-  int pin=-1;
+  int pin;
   NoteDuration *nd;
   String title;
   int nNotes;
@@ -100,9 +99,8 @@ private:
   friend void changeFreq(Melody* melody);
 
   /**
-   * Check is there the condition to play the melody, that is:
+   * Check if there is the condition to play the melody, that is:
    *  - a melody is loaded
-   *  - the pin is set
    */
   bool checkReadyness();
 

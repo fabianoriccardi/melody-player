@@ -16,8 +16,6 @@ void setup() {
   SPIFFS.begin();
   
   Melody mel(buzzerPin);
-  // Alternatively, you can call set the buzzer pin after the object construcion
-  mel.setPin(buzzerPin);
   
   mel.load(melodyFilePath);
   Serial.println(String("Title:") + mel.getTitle());
