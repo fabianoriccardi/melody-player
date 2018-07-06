@@ -16,7 +16,7 @@ bool Melody::loadTest(){
   return true;
 }
 
-void removeCarriageReturn(String& s){
+static void removeCarriageReturn(String& s){
   if(s.charAt(s.length()-1)=='\r'){
     s=s.substring(0,s.length()-1);
   }
