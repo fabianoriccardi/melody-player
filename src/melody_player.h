@@ -72,7 +72,7 @@ private:
 
     Melody melody;
 
-    const static bool debug = true;
+    const static bool debug = false;
 
     /**
      * Change the tone with to next note.

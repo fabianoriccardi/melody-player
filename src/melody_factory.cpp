@@ -61,8 +61,31 @@ Melody MelodyFactoryClass::load(String filepath){
   return Melody(title, tempo, notes);
 }
 
-bool load(String title, unsigned short tempo, String notes[], unsigned short nNotes){
+Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad){
+  if(title.length() == 0 && tempo <= 20){
+    return Melody();
+  }
+  if(nNotesToLoad == 0 || nNotesToLoad > maxLength ){
+    return Melody();
+  }
 
+  if(notesToLoad == nullptr){
+    return Melody();
+  }
+
+  notes = std::make_shared<std::vector<NoteDuration>>();
+  notes->reserve(nNotesToLoad);
+  noteFormat = NoteFormat::STRING;
+  bool error = false;
+  while(this->notes->size() < nNotesToLoad && !error){
+    String noteDuration = notesToLoad[notes->size()] + ",1";
+    error = !loadNote(noteDuration);
+  }
+  if(error){
+    return Melody();
+  }
+
+  return Melody(title, tempo, notes);
 }
 
 bool MelodyFactoryClass::loadTitle(String line){
@@ -83,7 +106,9 @@ bool MelodyFactoryClass::loadTempo(String line){
     String t = line.substring(6);
     this->tempo = t.toInt();
     if(debug) Serial.println(this->tempo);
-    return true;
+    if(this->tempo>20){
+      return true;
+    }
   }
   return false;
 }
@@ -124,7 +149,7 @@ bool MelodyFactoryClass::loadNote(String token){
 
   NoteDuration note;
   
-  if(debug) Serial.println(String("note+duration from file: ") + token);
+  if(debug) Serial.println(String("note+duration: ") + token);
   
   String aux;
   int j = 0;

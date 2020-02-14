@@ -18,8 +18,9 @@ public:
   /**
    * Load the melody from code.
    * Notes are represented as string accordigly to english notation (i.e. "C4", "G3", "G6").
+   * This method assumes that each note lasts 1 beat.
    */
-  bool load(String title, unsigned short tempo, String notes[], unsigned short nNotes);
+  Melody load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotes);
 
 private:
   enum class NoteFormat {ERROR, STRING, INTEGER};
@@ -57,7 +58,8 @@ private:
 
   /**
    * Parse a token that is a note and its duration.
-   * The format of this token is: note + ',' + duration.
+   * The format of this token is:
+   * <note> + ',' + <duration>.
    * Return true if parsing succeed, false otherwise.
    */
   bool loadNote(String token);
@@ -65,7 +67,7 @@ private:
   /**
    * Set this value to true to enable debug messages over serial port.
    */
-  static const bool debug = true;
+  static const bool debug = false;
 };
 
 extern MelodyFactoryClass MelodyFactory;

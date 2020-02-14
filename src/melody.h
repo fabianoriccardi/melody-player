@@ -84,7 +84,7 @@ private:
 
   unsigned short counter;
   
-  const static unsigned short debug = 0;
+  const static bool debug = false;
 };
 
 #endif // END MELODY_H
