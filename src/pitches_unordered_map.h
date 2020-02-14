@@ -8,10 +8,10 @@
 #include <unordered_map>
 
 /**
- * NOTE: Use carefully with arduino: this map is quite large
+ * NOTE: Use carefully with Arduino: this map is quite large
  * (could be around 1Kbyte), so if you're running low of RAM,
  * switch to the original pitches.h file (based on #define)
  */
-extern std::unordered_map <std::string,int >  m;
+extern std::unordered_map <std::string, unsigned short> noteMapping;
 
 #endif // END PITCHES_UNORDERED_MAP_H

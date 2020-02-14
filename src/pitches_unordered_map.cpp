@@ -1,6 +1,7 @@
 #include "pitches_unordered_map.h"
 
-std::unordered_map <std::string,int >  m {
+// Notes are expressed in English convention
+std::unordered_map<std::string, unsigned short> noteMapping {
     {"SILENCE", 0},
     {"B0", 31},
     {"C1", 33},
