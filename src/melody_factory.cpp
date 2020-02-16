@@ -143,8 +143,8 @@ MelodyFactoryClass::NoteFormat MelodyFactoryClass::loadNoteFormat(String line){
 }
 
 bool MelodyFactoryClass::loadNote(String token){
+  token.trim();
   bool error = false;
-
   NoteDuration note;
   
   if(debug) Serial.println(String("note+duration: ") + token);

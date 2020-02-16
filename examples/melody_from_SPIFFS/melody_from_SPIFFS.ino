@@ -14,7 +14,7 @@ int buzzerPin = 14;
 #endif
 
 // This file do not exist
-String melodyFilePath = "/melody3.txt";
+String melodyFilePath = "/jingle.mel";
 
 MelodyPlayer player(buzzerPin);
 
