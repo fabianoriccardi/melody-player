@@ -56,8 +56,6 @@ Melody MelodyFactoryClass::load(String filepath){
     }
   }
 
-  Serial.println("END");
-
   return Melody(title, tempo, notes);
 }
 
