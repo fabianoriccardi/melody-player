@@ -15,8 +15,14 @@ Melody MelodyFactoryClass::load(String filepath){
     return Melody();
   }
 
+  // Skip multi-line comments at the begin of the file
+  String line = f.readStringUntil('\n');
+  while(line.charAt(0) == '#'){
+  	line = f.readStringUntil('\n');
+  }
+
   bool success = false;
-  success = loadTitle(f.readStringUntil('\n'));
+  success = loadTitle(line);
   if(!success){
     return Melody();
   }
