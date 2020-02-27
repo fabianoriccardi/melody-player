@@ -70,9 +70,9 @@ public:
   }
 
   /**
-   * Implement cast to bool, so you can do 'if(melody){...}'.
+   * Return true if contains a valid melody, false otherwise.
    */
-  operator bool() const {
+  explicit operator bool() const {
     return isValid();
   }
   
