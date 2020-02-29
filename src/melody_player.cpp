@@ -1,5 +1,4 @@
 #include "melody_player.h"
-#include <Ticker.h>
 
 void MelodyPlayer::play(){
   melody.reset();
@@ -31,30 +30,28 @@ void MelodyPlayer::play(){
   digitalWrite(pin, HIGH);
 }
 
-static Ticker ticker; 
-
 /**
  * NOTE: this is the function executed in the Ticker, aka the Thread on ESP* platform.
  * So you can decide to use delay(..) function without blocking the others threads 
  * (like the main one dedicated to loop() function).
  */
 void changeTone(MelodyPlayer* player){
-  static int i = 0;
-  if(i < player->melody.getLength()){
+  if(player->melodyIndex < player->melody.getLength()){
   	NoteDuration note(player->melody.getNote());
-    if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + note.duration + " iteration=" + i);
+    int noteDur = player->melody.getTempo() * note.duration;
+    if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + note.duration + " iteration=" + player->melodyIndex);
 #ifdef ESP32
     ledcWriteTone(player->pwmChannel, note.frequency);
-    delay(player->melody.getTempo() * note.duration);
+    delay(noteDur);
     ledcWriteTone(player->pwmChannel, 0);
-    ticker.once_ms(0.3f * note.duration * player->melody.getTempo(), changeTone, player);
+    player->ticker.once_ms(0.3f * noteDur, changeTone, player);
 #else
-    tone(player->pin, note.frequency, player->melody.getTempo() * note.duration);
-    ticker.once_ms(1.3f * note.duration * player->melody.getTempo(), changeTone, player);
+    tone(player->pin, note.frequency, noteDur);
+    player->ticker.once_ms(1.3f * noteDur, changeTone, player);
 #endif
-    i++;
+    player->melodyIndex++;
   } else {
-    i = 0;
+    player->melodyIndex = 0;
     player->playing = false;
 #ifdef ESP32
     ledcWrite(player->pwmChannel, 0);
@@ -74,6 +71,24 @@ void MelodyPlayer::playAsync(){
   
   // Start immediately
   ticker.once(0, changeTone, this);
+}
+
+void MelodyPlayer::stop(){
+  ticker.detach();
+  melody.reset();
+  melodyIndex = 0;
+  playing = false;
+
+#ifdef ESP32
+  ledcWrite(pwmChannel, 0);
+  ledcDetachPin(pin);
+#endif
+
+  // Need to avoid to waste energy: the buzzer will consume energy
+  // if turned "active".
+  // Force pin mode OUTPUT again to overwrite PWM settings
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, HIGH);
 }
 
 void MelodyPlayer::setupPin(){

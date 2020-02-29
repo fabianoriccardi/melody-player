@@ -2,6 +2,7 @@
 #define MELODY_PLAYER_H
 
 #include "melody.h"
+#include <Ticker.h>
 
 class MelodyPlayer {
 public:
@@ -54,6 +55,12 @@ public:
     }
 
     /**
+     * Stop the melody. 
+     * After a stop(), if you call play(), the melody restarts from the begin.
+     */
+    void stop();
+
+    /**
      * Tell if the melody is played.
      */
     bool isPlaying(){
@@ -71,6 +78,9 @@ private:
     bool playing;
 
     Melody melody;
+    int melodyIndex;
+
+    Ticker ticker;
 
     const static bool debug = false;
 
