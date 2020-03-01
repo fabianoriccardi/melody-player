@@ -6,18 +6,11 @@
 
 class MelodyPlayer {
 public:
-    #ifdef ESP32
-        MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0): pin(pin), pwmChannel(pwmChannel), playing(false) {
-            pinMode(pin, OUTPUT);
-            digitalWrite(pin, HIGH);
-        };
-    #else
-        MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0): pin(pin), playing(false) {
-            pinMode(pin, OUTPUT);
-            digitalWrite(pin, HIGH);
-        };
-    #endif
-	
+#ifdef ESP32
+    MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0);
+#else
+    MelodyPlayer(unsigned char pin);
+#endif
 
   	/**
 	 * Play the last melody successfully played in a synchrounus (blocking) way.
@@ -25,34 +18,21 @@ public:
     void play();
 
     /**
-     * Play the melody in a synchrounus (blocking) way.
+     * Play the melody in a synchronous (blocking) way.
      * If the melody is not valid, this call has no effect.
      */
-    void play(Melody melody){
-        if(!melody){
-            return;
-        }
-        this->melody = melody;
-        play();
-    }
+    void play(Melody& melody);
 
     /**
-     * Play the last melody using a "thread", to reproduce the melody
-     * while performing other actions.
+     * Play the last melody in asynchronous way, this function return immediately.
      */
     void playAsync();
 
     /**
-     * Play the music using a "thread", to reproduce the melody
-     * while performing other actions.
+     * Play the melody in asynchronous way, this function return immediately.
+     * If the melody is not valid, this call has no effect.
      */
-    void playAsync(Melody melody){
-        if(!melody){
-            return;
-        }
-        this->melody = melody;
-        playAsync();
-    }
+    void playAsync(Melody& melody);
 
     /**
      * Stop the melody. 
@@ -72,14 +52,35 @@ private:
 
 #ifdef ESP32
     unsigned char pwmChannel;
-    bool silence;
 #endif
 
-    // Variable to contain the state of the Player
+    /**
+     * Class to store the current state of a Melody.
+     */
+    class MelodyState {
+    public:
+        MelodyState() {};
+        MelodyState(Melody& melody): melody(melody), index(0), partialNoteReproduction(0) {};
+        Melody melody;
+        unsigned short index;
+
+        /**
+         * Used to pause a melody, and exchange the State between Players.
+         * Values expressed in ms.
+         */
+        unsigned short partialNoteReproduction;
+
+#ifdef ESP32
+        bool silence;
+#endif
+    };
+
+    /**
+     * Variable to contain the state of the Player
+     */
     bool playing;
 
-    Melody melody;
-    int melodyIndex;
+    MelodyState melodyState;
 
     Ticker ticker;
 
@@ -90,7 +91,17 @@ private:
      */
     friend void changeTone(MelodyPlayer* melody);
 
-    void setupPin();
+    /**
+     * Configure pin to emit PWM.
+     */
+    void turnOn();
+
+    /**
+     * Disable PWM and put the buzzer is low power state.
+     * 
+     * This calls will fails if PWM is not initialized!
+     */
+    void turnOff();
 };
 
 #endif // END MELODY_PLAYER_H
