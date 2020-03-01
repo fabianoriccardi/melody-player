@@ -72,6 +72,7 @@ private:
 
 #ifdef ESP32
     unsigned char pwmChannel;
+    bool silence;
 #endif
 
     // Variable to contain the state of the Player

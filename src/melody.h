@@ -14,16 +14,16 @@ struct NoteDuration {
 };
 
 /**
- * This class stores the data of a melody. To eases the creation of a melody,
- * MelodyFactory class is provided.
+ * This class stores the data to play a melody. 
+ * To eases the creation of a melody, MelodyFactory class is provided.
  */
 class Melody {
 public:
   Melody():
-   title(""), tempo(0), notes(nullptr), counter(0) {};
+   title(""), tempo(0), notes(nullptr) {};
   
   Melody(String title, unsigned short tempo, std::shared_ptr<std::vector<NoteDuration>> notes):
-    title(title), tempo(tempo), notes(notes), counter(0) {};
+    title(title), tempo(tempo), notes(notes) {};
 
   /**
    * Return the title of the melody.
@@ -51,16 +51,12 @@ public:
    * Get a note to be reproduced.
    * Check length or validity of melody before call this method.
    */
-  NoteDuration getNote() {
-    return (*notes)[counter++];
+  NoteDuration getNote(unsigned short i) const {
+    if(i < (*notes).size()) {
+      return (*notes)[i];
+    }
+    return (*notes).back();
   };
-
-  /**
-   * Position the inner pointer to the first note.
-   */
-  void reset() {
-    counter = 0;
-  }
 
   /**
    * Tell if the object contains a valid melody.
@@ -81,8 +77,6 @@ private:
   unsigned short tempo;
   std::shared_ptr<std::vector<NoteDuration>> notes;
   const static unsigned short maxLength = 1000;
-
-  unsigned short counter;
   
   const static bool debug = false;
 };

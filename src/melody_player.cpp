@@ -1,13 +1,11 @@
 #include "melody_player.h"
 
 void MelodyPlayer::play(){
-  melody.reset();
-
   playing = true;
   setupPin();
 
   for(int i = 0; i < melody.getLength(); i++){
-  	NoteDuration note(melody.getNote());
+  	NoteDuration note(melody.getNote(i));
     if(debug) Serial.println(String("Playing: frequency:") + note.frequency + " duration:" + note.duration);
 #ifdef ESP32
     ledcWriteTone(pwmChannel, note.frequency);
@@ -30,26 +28,27 @@ void MelodyPlayer::play(){
   digitalWrite(pin, HIGH);
 }
 
-/**
- * NOTE: this is the function executed in the Ticker, aka the Thread on ESP* platform.
- * So you can decide to use delay(..) function without blocking the others threads 
- * (like the main one dedicated to loop() function).
- */
 void changeTone(MelodyPlayer* player){
-  if(player->melodyIndex < player->melody.getLength()){
-  	NoteDuration note(player->melody.getNote());
+  if(player->melodyIndex < player->melody.getLength()) {
+  	NoteDuration note(player->melody.getNote(player->melodyIndex));
     int noteDur = player->melody.getTempo() * note.duration;
     if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + note.duration + " iteration=" + player->melodyIndex);
 #ifdef ESP32
-    ledcWriteTone(player->pwmChannel, note.frequency);
-    delay(noteDur);
-    ledcWriteTone(player->pwmChannel, 0);
-    player->ticker.once_ms(0.3f * noteDur, changeTone, player);
+    if(player->silence) {
+      ledcWriteTone(player->pwmChannel, 0);
+      player->ticker.once_ms(0.3f * noteDur, changeTone, player);
+      player->melodyIndex++;
+      player->silence = false;
+    } else {
+      ledcWriteTone(player->pwmChannel, note.frequency);
+      player->ticker.once_ms(1.0f * noteDur, changeTone, player);
+      player->silence = true;
+    }
 #else
     tone(player->pin, note.frequency, noteDur);
     player->ticker.once_ms(1.3f * noteDur, changeTone, player);
-#endif
     player->melodyIndex++;
+#endif
   } else {
     player->melodyIndex = 0;
     player->playing = false;
@@ -64,9 +63,8 @@ void changeTone(MelodyPlayer* player){
 }
 
 void MelodyPlayer::playAsync(){
-  melody.reset();
-
   playing = true;
+  silence = false;
   setupPin();
   
   // Start immediately
@@ -75,7 +73,6 @@ void MelodyPlayer::playAsync(){
 
 void MelodyPlayer::stop(){
   ticker.detach();
-  melody.reset();
   melodyIndex = 0;
   playing = false;
 
