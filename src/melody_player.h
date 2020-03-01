@@ -3,6 +3,7 @@
 
 #include "melody.h"
 #include <Ticker.h>
+#include <memory>
 
 class MelodyPlayer {
 public:
@@ -44,8 +45,21 @@ public:
      * Tell if the melody is played.
      */
     bool isPlaying(){
-        return playing;
+        return state == State::PLAY;
     }
+
+    /**
+     * The current melody and the source Player state is transferend to the destination Player.
+     * The source gets always stopped. (i.e. if source is played, the destination continues
+     * to play the current melody).
+     */
+    void transferMelodyTo(MelodyPlayer& destPlayer);
+
+    /**
+     * The current melody and source Player state is cloned to the destiantion Player.
+     * The players remains indipendent (e.g. the melody can be stop or replaced indipendently).
+     */
+    void duplicateMelodyTo(MelodyPlayer& destPlayer);
 
 private:
 	unsigned char pin;
@@ -59,7 +73,7 @@ private:
      */
     class MelodyState {
     public:
-        MelodyState() {};
+        MelodyState(): index(0), partialNoteReproduction(0) {};
         MelodyState(Melody& melody): melody(melody), index(0), partialNoteReproduction(0) {};
         Melody melody;
         unsigned short index;
@@ -69,18 +83,24 @@ private:
          * Values expressed in ms.
          */
         unsigned short partialNoteReproduction;
-
-#ifdef ESP32
         bool silence;
-#endif
+        
+        /**
+         * Reset the state (i.e. like a melody not yet reproduced).
+         */
+        void reset() {
+            index = 0;
+            partialNoteReproduction = 0;
+        }
     };
 
-    /**
-     * Variable to contain the state of the Player
-     */
-    bool playing;
+    enum class State { STOP, PLAY, PAUSE};
 
-    MelodyState melodyState;
+    State state;
+
+    std::unique_ptr<MelodyState> melodyState;
+
+    unsigned long supportSemiNote;
 
     Ticker ticker;
 
