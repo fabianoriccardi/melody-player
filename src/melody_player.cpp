@@ -48,31 +48,39 @@ void changeTone(MelodyPlayer* player) {
     int noteDur = player->melodyState->melody.getTempo() * note.duration;
     if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + note.duration + " iteration=" + player->melodyState->index);
 
-#ifdef ESP32
     if(player->melodyState->silence) {
+#ifdef ESP32
       ledcWriteTone(player->pwmChannel, 0);
+#else
+      tone(player->pin, 0);
+#endif
       player->melodyState->index++;
       player->melodyState->silence = false;
 
       float duration = 0.3f * noteDur;
       player->supportSemiNote = millis() + duration;
       player->ticker.once_ms(duration, changeTone, player);
+#ifdef ESP32
+      player->ticker.once_ms(duration, changeTone, player);
+#else
+      player->ticker.once_ms_scheduled(duration, std::bind(changeTone, player));
+#endif
     } else {
+#ifdef ESP32
       ledcWriteTone(player->pwmChannel, note.frequency);
+#else
+      tone(player->pin, note.frequency);
+#endif
       player->melodyState->silence = true;
 
       float duration = 1.0f * noteDur;
       player->supportSemiNote = millis() + duration;
+#ifdef ESP32
       player->ticker.once_ms(duration, changeTone, player);
-    }
 #else
-    player->supportSemiNote = millis() + noteDur;
-
-    tone(player->pin, note.frequency, noteDur);
-    player->ticker.once_ms(1.3f * noteDur, changeTone, player);
-    player->melodyState->index++;
+      player->ticker.once_ms_scheduled(duration, std::bind(changeTone, player));
 #endif
-
+    }
   } else {
     player->melodyState->index = 0;
     player->state = MelodyPlayer::State::STOP;
@@ -86,16 +94,15 @@ void MelodyPlayer::playAsync(){
     return;
   }
 
+  turnOn();
   state = State::PLAY;
 
-#ifdef ESP32
-  melodyState->silence = false;
-#endif
-
-  turnOn();
-  
   // Start immediately
+#ifdef ESP32
   ticker.once(0, changeTone, this);
+#else
+  ticker.once_scheduled(0, std::bind(changeTone, this));
+#endif
 }
 
 void MelodyPlayer::playAsync(Melody& melody){
