@@ -20,7 +20,14 @@ public:
    * Notes are represented as string accordigly to english notation (i.e. "C4", "G3", "G6").
    * This method assumes that each note lasts 1 beat.
    */
-  Melody load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotes);
+  Melody load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad);
+
+  /**
+   * Load the melody from code.
+   * frequenciesToLoad are intenger numbers expressing the real reproduced frequency.
+   * This method assumes that each note lasts 1 beat.
+   */
+  Melody load(String title, unsigned short tempo, unsigned short frequenciesToLoad[], unsigned short nFrequenciesToLoad);
 
 private:
   enum class NoteFormat {ERROR, STRING, INTEGER};

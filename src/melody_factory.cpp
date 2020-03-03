@@ -92,6 +92,33 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notes
   return Melody(title, tempo, notes);
 }
 
+Melody MelodyFactoryClass::load(String title, unsigned short tempo, unsigned short frequenciesToLoad[], unsigned short nFrequenciesToLoad){
+  if(title.length() == 0 && tempo <= 20){
+    return Melody();
+  }
+  if(nFrequenciesToLoad == 0 || nFrequenciesToLoad > maxLength ){
+    return Melody();
+  }
+
+  if(frequenciesToLoad == nullptr){
+    return Melody();
+  }
+
+  notes = std::make_shared<std::vector<NoteDuration>>();
+  notes->reserve(nFrequenciesToLoad);
+  noteFormat = NoteFormat::INTEGER;
+  bool error = false;
+  while(this->notes->size() < nFrequenciesToLoad && !error){
+    String noteDuration = String(frequenciesToLoad[notes->size()]) + ",1";
+    error = !loadNote(noteDuration);
+  }
+  if(error){
+    return Melody();
+  }
+
+  return Melody(title, tempo, notes);
+}
+
 bool MelodyFactoryClass::loadTitle(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
