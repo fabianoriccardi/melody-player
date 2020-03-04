@@ -29,9 +29,7 @@ void MelodyPlayer::play(){
     delay(1.3f * (melodyState->melody.getTempo() * note.duration));
 #endif
   }
-  state = State::STOP;
-
-  turnOff();
+  stop();
 }
 
 void MelodyPlayer::play(Melody& melody){
@@ -43,23 +41,31 @@ void MelodyPlayer::play(Melody& melody){
 }
 
 void changeTone(MelodyPlayer* player) {
-  if(player->melodyState->index < player->melodyState->melody.getLength()) {
-  	NoteDuration note(player->melodyState->melody.getNote(player->melodyState->index));
+  // The last silence is not reproduced
+  player->melodyState->advance();
+  if(player->melodyState->getIndex() + player->melodyState->isSilence() < player->melodyState->melody.getLength()) {
+  	NoteDuration note(player->melodyState->melody.getNote(player->melodyState->getIndex()));
     int noteDur = player->melodyState->melody.getTempo() * note.duration;
-    if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + note.duration + " iteration=" + player->melodyState->index);
-
-    if(player->melodyState->silence) {
+    
+    float duration = player->melodyState->getRemainingDuration();
+    if(duration > 0) {
+      player->melodyState->resetRemainingDuration();
+    } else {
+      if(player->melodyState->isSilence()){
+        duration = 0.3f * noteDur;
+      } else {
+        duration = 1.0f * noteDur;
+      }
+    }
+    if(player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + duration + " iteration=" + player->melodyState->getIndex());
+    
+    if(player->melodyState->isSilence()) {
 #ifdef ESP32
       ledcWriteTone(player->pwmChannel, 0);
 #else
       tone(player->pin, 0);
 #endif
-      player->melodyState->index++;
-      player->melodyState->silence = false;
 
-      float duration = 0.3f * noteDur;
-      player->supportSemiNote = millis() + duration;
-      player->ticker.once_ms(duration, changeTone, player);
 #ifdef ESP32
       player->ticker.once_ms(duration, changeTone, player);
 #else
@@ -71,21 +77,16 @@ void changeTone(MelodyPlayer* player) {
 #else
       tone(player->pin, note.frequency);
 #endif
-      player->melodyState->silence = true;
 
-      float duration = 1.0f * noteDur;
-      player->supportSemiNote = millis() + duration;
 #ifdef ESP32
       player->ticker.once_ms(duration, changeTone, player);
 #else
       player->ticker.once_ms_scheduled(duration, std::bind(changeTone, player));
 #endif
     }
+    player->supportSemiNote = millis() + duration;
   } else {
-    player->melodyState->index = 0;
-    player->state = MelodyPlayer::State::STOP;
-   
-    player->turnOff();
+    player->stop();
   }
 }
 
@@ -129,17 +130,15 @@ void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer){
 
   destPlayer.stop();
 
-  if(isPlaying()) {
-    stopPlay();
-    melodyState->saveCurrentState(supportSemiNote);
-
-    destPlayer.melodyState = std::move(melodyState);
+  bool playing = isPlaying();
+  
+  stopPlay();
+  melodyState->saveRemainingDuration(supportSemiNote);
+  destPlayer.melodyState = std::move(melodyState);
+  
+  if(playing) {
     destPlayer.playAsync();
   } else {
-    stopPlay();
-    melodyState->saveCurrentState(supportSemiNote);
-
-    destPlayer.melodyState = std::move(melodyState);
     destPlayer.state = state;
   }
 }
@@ -151,7 +150,7 @@ void MelodyPlayer::duplicateMelodyTo(MelodyPlayer& destPlayer){
 
   destPlayer.stop();
   destPlayer.melodyState = make_unique<MelodyState>(*(this->melodyState));
-  destPlayer.melodyState->saveCurrentState(supportSemiNote);
+  destPlayer.melodyState->saveRemainingDuration(supportSemiNote);
 
   if(isPlaying()) {
     destPlayer.playAsync();

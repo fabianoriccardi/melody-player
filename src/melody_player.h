@@ -77,9 +77,72 @@ private:
      */
     class MelodyState {
     public:
-        MelodyState(): index(0), partialNoteReproduction(0) {};
-        MelodyState(Melody& melody): melody(melody), index(0), partialNoteReproduction(0) {};
+        MelodyState(): first(true), index(0), partialNoteReproduction(0) {};
+        MelodyState(const Melody& melody): first(true), melody(melody), index(0), silence(false), partialNoteReproduction(0) {};
         Melody melody;
+        
+        unsigned short getIndex() const {
+            return index;
+        }
+
+        bool isSilence() const {
+            return silence;
+        }
+
+        /*
+         * Advance the state of one step if no note reproduction is pending. 
+         * Call this before get the note to play.
+         */
+        void advance() {
+            if(first) {
+                first = false;
+                return;
+            }
+            if(partialNoteReproduction != 0) {
+                return;
+            }
+            if(silence) {
+                index++;
+                silence = false;
+            } else {
+                silence = true;
+            }
+        }
+        
+        /**
+         * Reset the state (i.e. like a melody not yet reproduced).
+         */
+        void reset() {
+            first = true;
+            index = 0;
+            partialNoteReproduction = 0;
+            silence = false;
+        }
+
+        /**
+         * Save the current state of the melody, including the time to finish the current note.
+         */
+        void saveRemainingDuration(unsigned long supportSemiNote){
+            partialNoteReproduction = supportSemiNote - millis();
+            // Threshold values, to avoid Ticker trigger too early
+            if(partialNoteReproduction < 10) {
+              partialNoteReproduction = 0;
+            }
+        }
+
+        /**
+         * Save the current state of the melody, including the time to finish the current note.
+         */
+        void resetRemainingDuration(){
+            partialNoteReproduction = 0;
+        }
+
+        unsigned short getRemainingDuration(){
+            return partialNoteReproduction;
+        }
+    private:
+        bool first;
+        bool silence;
         unsigned short index;
 
         /**
@@ -87,31 +150,6 @@ private:
          * Values expressed in ms.
          */
         unsigned short partialNoteReproduction;
-        bool silence;
-        
-        /**
-         * Reset the state (i.e. like a melody not yet reproduced).
-         */
-        void reset() {
-            index = 0;
-            partialNoteReproduction = 0;
-        }
-
-        /**
-         * Save the current state of the melody, including the time to finish the current note.
-         */
-        void saveCurrentState(unsigned long supportSemiNote){
-            // Rollback of the melodyState to reproduce the "partial" note
-            partialNoteReproduction = supportSemiNote - millis();
-            if(partialNoteReproduction < 10) {
-              partialNoteReproduction = 0;
-            } else {
-              if(!silence) {
-                index--;
-              }
-              silence = !silence;
-            }
-        }
     };
 
     enum class State { STOP, PLAY, PAUSE};
