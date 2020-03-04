@@ -8,13 +8,17 @@
 class MelodyPlayer {
 public:
 #ifdef ESP32
+    /**
+     * pwmChannel is optional and you have to configure it only if you need to play
+     * simultaneous melodies.
+     */
     MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0);
 #else
     MelodyPlayer(unsigned char pin);
 #endif
 
   	/**
-	 * Play the last melody successfully played in a synchrounus (blocking) way.
+	 * Play the last melody played in a synchrounus (blocking) way.
      */
     void play();
 
@@ -26,6 +30,7 @@ public:
 
     /**
      * Play the last melody in asynchronous way, this function return immediately.
+     * If the melody is not valid, this call has no effect.
      */
     void playAsync();
 
@@ -37,27 +42,26 @@ public:
 
     /**
      * Stop the melody. 
-     * After a stop(), if you call play(), the melody restarts from the begin.
+     * After a stop(), if you call play() or playAsync(), the melody restarts from the begin.
      */
     void stop();
 
     /**
      * Tell if the melody is played.
      */
-    bool isPlaying(){
+    bool isPlaying() const{
         return state == State::PLAY;
     }
 
     /**
      * The current melody and the source Player state is transferend to the destination Player.
-     * The source gets always stopped. (i.e. if source is played, the destination continues
-     * to play the current melody).
+     * The source gets stopped. You have to call play(Melody) to make it play again.
      */
     void transferMelodyTo(MelodyPlayer& destPlayer);
 
     /**
-     * The current melody and source Player state is cloned to the destiantion Player.
-     * The players remains indipendent (e.g. the melody can be stop or replaced indipendently).
+     * The current melody and source player state is cloned to the destiantion Player.
+     * The two players remains indipendent (e.g. the melody can be stop/pause/played indipendently).
      */
     void duplicateMelodyTo(MelodyPlayer& destPlayer);
 
@@ -92,6 +96,22 @@ private:
             index = 0;
             partialNoteReproduction = 0;
         }
+
+        /**
+         * Save the current state of the melody, including the time to finish the current note.
+         */
+        void saveCurrentState(unsigned long supportSemiNote){
+            // Rollback of the melodyState to reproduce the "partial" note
+            partialNoteReproduction = supportSemiNote - millis();
+            if(partialNoteReproduction < 10) {
+              partialNoteReproduction = 0;
+            } else {
+              if(!silence) {
+                index--;
+              }
+              silence = !silence;
+            }
+        }
     };
 
     enum class State { STOP, PLAY, PAUSE};
@@ -110,6 +130,11 @@ private:
      * Change the tone with to next note.
      */
     friend void changeTone(MelodyPlayer* melody);
+
+    /**
+     * Stop to play melody, but do not reset the melody index.
+     */
+    void stopPlay();
 
     /**
      * Configure pin to emit PWM.

@@ -118,10 +118,8 @@ void MelodyPlayer::stop(){
     return;
   }
 
-  ticker.detach();
+  stopPlay();
   melodyState->reset();
-  state = State::STOP;
-  turnOff();
 }
 
 void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer){
@@ -132,34 +130,14 @@ void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer){
   destPlayer.stop();
 
   if(isPlaying()) {
-    // Stop player, but do not reset the melodyState
-    ticker.detach();
-    state = State::STOP;
-    turnOff();
-
-    // Rollback of the melodyState to reproduce the "partial" note
-    melodyState->partialNoteReproduction = supportSemiNote - millis();
-    if(melodyState->partialNoteReproduction < 10) {
-      melodyState->partialNoteReproduction = 0;
-    } else {
-      if(!melodyState->silence) {
-        melodyState->index--;
-      }
-      melodyState->silence = !melodyState->silence;
-    }
+    stopPlay();
+    melodyState->saveCurrentState(supportSemiNote);
 
     destPlayer.melodyState = std::move(melodyState);
     destPlayer.playAsync();
   } else {
-    // Stop player, but do not reset the melodyState
-    ticker.detach();
-    state = State::STOP;
-    turnOff();
-
-    melodyState->partialNoteReproduction = supportSemiNote - millis();
-    if(melodyState->partialNoteReproduction < 10) {
-      melodyState->partialNoteReproduction = 0;
-    }
+    stopPlay();
+    melodyState->saveCurrentState(supportSemiNote);
 
     destPlayer.melodyState = std::move(melodyState);
     destPlayer.state = state;
@@ -173,7 +151,8 @@ void MelodyPlayer::duplicateMelodyTo(MelodyPlayer& destPlayer){
 
   destPlayer.stop();
   destPlayer.melodyState = make_unique<MelodyState>(*(this->melodyState));
-  
+  destPlayer.melodyState->saveCurrentState(supportSemiNote);
+
   if(isPlaying()) {
     destPlayer.playAsync();
   } else {
@@ -195,6 +174,12 @@ MelodyPlayer::MelodyPlayer(unsigned char pin):
 };
 #endif
 
+void MelodyPlayer::stopPlay(){
+  // Stop player, but do not reset the melodyState
+  ticker.detach();
+  state = State::STOP;
+  turnOff();
+}
 
 void MelodyPlayer::turnOn(){
 #ifdef ESP32
