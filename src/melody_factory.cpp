@@ -92,7 +92,7 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notes
   return Melody(title, tempo, notes);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short tempo, unsigned short frequenciesToLoad[], unsigned short nFrequenciesToLoad){
+Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad){
   if(title.length() == 0 && tempo <= 20){
     return Melody();
   }

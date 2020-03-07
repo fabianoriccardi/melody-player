@@ -27,7 +27,7 @@ public:
    * frequenciesToLoad are intenger numbers expressing the real reproduced frequency.
    * This method assumes that each note lasts 1 beat.
    */
-  Melody load(String title, unsigned short tempo, unsigned short frequenciesToLoad[], unsigned short nFrequenciesToLoad);
+  Melody load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad);
 
 private:
   enum class NoteFormat {ERROR, STRING, INTEGER};
