@@ -1,14 +1,14 @@
 /**
- * Play a simple melody hardcoded in the sketch.
+ * Play a simple melody directly hardcoded in the sketch.
+ * 
+ * You can observe the difference between the blocking play(..) method,
+ * which block the sketch for the entire duration of the melody, and
+ * playAsync(..) which returns immediately.
  */
 #include <melody_player.h>
 #include <melody_factory.h>
 
-#ifdef ESP8266
 int buzzerPin = D6;
-#else
-int buzzerPin = 14;
-#endif
 
 MelodyPlayer player(buzzerPin);
 
@@ -16,6 +16,9 @@ void setup() {
   Serial.begin(115200);
   while(!Serial);
 
+  Serial.println();
+  Serial.println("Melody Player - Simple Play (blocking vs non-blocking play");
+  
   Serial.println("Loading melody...");
   String notes[] = { "C4", "G3", "G3", "A3", "G3", "SILENCE", "B3", "C4" };
   // Load and play a correct melody
@@ -23,8 +26,13 @@ void setup() {
   
   Serial.println(String(" Title:") + melody.getTitle());
   Serial.println(String(" Tempo:") + melody.getTempo());
+  Serial.print("Play in blocking mode...");
   player.play(melody);
   Serial.println("The end!");
+
+  Serial.print("Play in non-blocking mode...");
+  player.playAsync(melody);
+  Serial.println(" not the end!");
 }
 
 void loop() {}

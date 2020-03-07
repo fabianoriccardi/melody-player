@@ -1,5 +1,0 @@
-title=Nice Melody
-tempo=125
-length=8
-format=string
-C4,2|G3,1|G3,1|A3,2|G3,2|SILENCE,2|B3,2|C4,2

@@ -1,5 +1,0 @@
-title=Missing Mapping
-tempo=300
-length=4
-format=string
-E5,6|Z5,6|G4,6|E5,4|

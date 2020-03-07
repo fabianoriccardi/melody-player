@@ -1,5 +1,0 @@
-title=My second melody
-tempo=300
-length=4
-format=integer
-500,1|1000,2|0,1|2000,2
