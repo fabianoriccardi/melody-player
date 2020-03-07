@@ -119,8 +119,19 @@ void MelodyPlayer::stop(){
     return;
   }
 
-  stopPlay();
+  haltPlay();
+  state = State::STOP;
   melodyState->reset();
+}
+
+void MelodyPlayer::pause(){
+  if(melodyState == nullptr){
+    return;
+  }
+
+  haltPlay();
+  state = State::PAUSE;
+  melodyState->saveRemainingDuration(supportSemiNote);
 }
 
 void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer){
@@ -132,7 +143,8 @@ void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer){
 
   bool playing = isPlaying();
   
-  stopPlay();
+  haltPlay();
+  state = State::STOP;
   melodyState->saveRemainingDuration(supportSemiNote);
   destPlayer.melodyState = std::move(melodyState);
   
@@ -173,10 +185,9 @@ MelodyPlayer::MelodyPlayer(unsigned char pin):
 };
 #endif
 
-void MelodyPlayer::stopPlay(){
+void MelodyPlayer::haltPlay(){
   // Stop player, but do not reset the melodyState
   ticker.detach();
-  state = State::STOP;
   turnOff();
 }
 

@@ -42,9 +42,16 @@ public:
 
     /**
      * Stop the melody. 
-     * After a stop(), if you call play() or playAsync(), the melody restarts from the begin.
+     * Then, if you will call play() or playAsync(), the melody restarts from the begin.
      */
     void stop();
+
+    /**
+     * Pause the current melody.
+     * Then, if you will call play() or playAsync(), the melody continues from 
+     * where it was paused.
+     */
+    void pause();
 
     /**
      * Tell if the melody is played.
@@ -78,7 +85,7 @@ private:
     class MelodyState {
     public:
         MelodyState(): first(true), index(0), partialNoteReproduction(0) {};
-        MelodyState(const Melody& melody): first(true), melody(melody), index(0), silence(false), partialNoteReproduction(0) {};
+        MelodyState(const Melody& melody): melody(melody), first(true), silence(false), index(0), partialNoteReproduction(0) {};
         Melody melody;
         
         unsigned short getIndex() const {
@@ -170,9 +177,10 @@ private:
     friend void changeTone(MelodyPlayer* melody);
 
     /**
-     * Stop to play melody, but do not reset the melody index.
+     * Halt the advancement of the melody reproduction.
+     * This is the common method for pause and stop.
      */
-    void stopPlay();
+    void haltPlay();
 
     /**
      * Configure pin to emit PWM.
