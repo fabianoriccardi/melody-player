@@ -12,22 +12,30 @@ void MelodyPlayer::play(){
   if(melodyState == nullptr) {
     return;
   }
-
+  
   turnOn();
   state = State::PLAY;
 
-  for(int i = 0; i < melodyState->melody.getLength(); i++){
-  	NoteDuration note(melodyState->melody.getNote(i));
+  melodyState->advance();
+  while(melodyState->getIndex() + melodyState->isSilence() < melodyState->melody.getLength()){
+  	NoteDuration note(melodyState->melody.getNote(melodyState->getIndex()));
     if(debug) Serial.println(String("Playing: frequency:") + note.frequency + " duration:" + note.duration);
+    if(melodyState->isSilence()){
 #ifdef ESP32
-    ledcWriteTone(pwmChannel, note.frequency);
-    delay(melodyState->melody.getTempo() * note.duration);
-    ledcWriteTone(pwmChannel, 0);
-    delay(0.3f * (melodyState->melody.getTempo() * note.duration));
+      ledcWriteTone(pwmChannel, 0);
 #else
-    tone(pin, note.frequency, melodyState->melody.getTempo() * note.duration);
-    delay(1.3f * (melodyState->melody.getTempo() * note.duration));
+      noTone(pin);
 #endif
+      delay(0.3f * melodyState->melody.getTempo() * note.duration);
+    } else {
+#ifdef ESP32
+      ledcWriteTone(pwmChannel, note.frequency);
+#else
+      tone(pin, note.frequency);
+#endif
+      delay(melodyState->melody.getTempo() * note.duration);
+    }
+    melodyState->advance();
   }
   stop();
 }
