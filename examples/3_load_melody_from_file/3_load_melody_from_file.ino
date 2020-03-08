@@ -27,7 +27,7 @@ void setup() {
   Serial.println();
   Serial.println("Melody Player - Load Melody from File");
   
-  // Remember of init the filesystem before loading a melody
+  // Remember to init the filesystem before loading a melody
   SPIFFS.begin();
 
   Serial.println("Loading melody...");

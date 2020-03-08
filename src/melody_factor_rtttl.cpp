@@ -70,7 +70,7 @@ const uint16_t sourceNotes[] =
   2*NOTE_B7,
 };
 
-Melody MelodyFactoryClass::loadRtttl(String filepath) {
+Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
   File f = SPIFFS.open(filepath, "r");
   f.setTimeout(0);
 
@@ -106,6 +106,61 @@ Melody MelodyFactoryClass::loadRtttl(String filepath) {
     result = parseRtttlNote(s);
   }
   if(result && notes->size() > 0) {
+    return Melody(title, timeUnit, notes, false);
+  }
+
+  return Melody();
+}
+
+Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]){
+  String title;
+  int i = 0;
+  while(rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
+    title.concat(rtttlMelody[i]);
+    i++;
+  }
+
+  if(title.length() == 0 || rtttlMelody[i] == 0) {
+    return Melody();
+  }
+
+  //skip ':'
+  i++;
+
+  String defaultParameters;
+  while(rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
+    defaultParameters.concat(rtttlMelody[i]);
+    i++;
+  }
+
+  if(rtttlMelody[i] == 0){
+    return Melody();
+  }
+
+  defaultParameters.trim();
+  parseDefaultValues(defaultParameters);
+
+  // 32 because it is the shortest note!
+  int timeUnit = 60 * 1000 * 4 / beat / 32;
+
+  //skip ':'
+  i++;
+
+  notes = std::make_shared<std::vector<NoteDuration>>();
+  // Read notes
+  while(rtttlMelody[i] != 0) {
+    String note;
+    while(rtttlMelody[i] != 0 && rtttlMelody[i] != ',') {
+      note.concat(rtttlMelody[i]);
+      i++;
+    }
+    note.trim();
+    parseRtttlNote(note);
+    if(rtttlMelody[i] == ',') {
+      i++;
+    }
+  }
+  if(notes->size() > 0) {
     return Melody(title, timeUnit, notes, false);
   }
 

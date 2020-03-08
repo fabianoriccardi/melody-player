@@ -18,7 +18,12 @@ public:
   /**
    * Load melody from RTTTL format from file.
    */
-  Melody loadRtttl(String filePath);
+  Melody loadRtttlFile(String filePath);
+
+  /**
+   * Load melody from RTTTL format string.
+   */
+  Melody loadRtttlString(const char rtttlMelody[]);
 
   /**
    * Load the melody from code.
