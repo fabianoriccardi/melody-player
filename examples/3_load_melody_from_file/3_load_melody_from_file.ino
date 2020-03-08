@@ -25,7 +25,7 @@ void setup() {
   while(!Serial);
 
   Serial.println();
-  Serial.println("Melody Player - Play Melody from File");
+  Serial.println("Melody Player - Load Melody from File");
   
   // Remember of init the filesystem before loading a melody
   SPIFFS.begin();
@@ -41,6 +41,9 @@ void setup() {
   Melody melody = MelodyFactory.load(melodyFilePath);
   if(melody){
     Serial.println(melodyFilePath + " loaded!");
+  } else {
+    Serial.println("error");
+    while(1) delay(1000);
   }
   Serial.println(String(" Title: ") + melody.getTitle());
   Serial.println(String(" Tempo: ") + melody.getTempo() + " milliseconds");

@@ -30,6 +30,8 @@ void setup() {
   player.play(melody);
   Serial.println("The end!");
 
+  delay(1000);
+
   Serial.print("Play in non-blocking mode...");
   player.playAsync(melody);
   Serial.println(" not the end!");
