@@ -16,6 +16,11 @@ public:
   Melody load(String filePath);
 
   /**
+   * Load melody from RTTTL format from file.
+   */
+  Melody loadRtttl(String filePath);
+
+  /**
    * Load the melody from code.
    * Notes are represented as string accordigly to english notation (i.e. "C4", "G3", "G6").
    * This method assumes that each note lasts 1 beat.
@@ -39,6 +44,46 @@ private:
   // Used to check how many note are stored in a file.
   unsigned short nNotes;
   const unsigned short maxLength = 1000;
+
+  ///////////// RTTTL helpers
+  /**
+   * It is the default duration of a note. For example,
+   * "4" means that each note with no duration specifier 
+   * is by default considered a quarter note. Possibile values:
+   * 1 - whole note
+   * 2 - half note
+   * 4 - quarter note
+   * 8 - eighth note
+   * 16 - sixteenth note
+   * 32 - thirty-second note
+   */
+  const unsigned short defaultDuration = 4;
+  unsigned short duration;
+
+  /**
+   * The default octave. There are four octaves in the RTTTL format [4-7].
+   */
+  const unsigned short defaultOctave = 6;
+  unsigned short octave;
+
+  /**
+   * Beats per minute (BPM).
+   */
+  const unsigned short defaultBeat = 63;
+  unsigned short beat;
+
+  /**
+   * Try to parse the default parameters of RTTTL melody.
+   * If not found, it sets the default values (defined by rtttl specification).
+   */
+  void parseDefaultValues(String values);
+
+  unsigned int parseDuration(String& s, int& startFrom);
+  unsigned int parseOctave(String& s, int& startFrom);
+  unsigned int parseBeat(String& s, int& startFrom);
+  bool parseRtttlNote(String s);
+  
+  //////////// END RTTTL helpers
 
   /**
    * Get title from line.
