@@ -106,7 +106,7 @@ Melody MelodyFactoryClass::loadRtttl(String filepath) {
     result = parseRtttlNote(s);
   }
   if(result && notes->size() > 0) {
-    return Melody(title, timeUnit, notes);
+    return Melody(title, timeUnit, notes, false);
   }
 
   return Melody();

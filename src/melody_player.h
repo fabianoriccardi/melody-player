@@ -80,7 +80,7 @@ private:
 #endif
 
     /**
-     * Class to store the current state of a Melody.
+     * Store the current state of a Melody.
      */
     class MelodyState {
     public:
@@ -97,8 +97,8 @@ private:
         }
 
         /*
-         * Advance the state of one step if no note reproduction is pending. 
-         * Call this before get the note to play.
+         * Advance the index of one step if there isn't any partial note
+         * to be played. Call this before getting the note to play.
          */
         void advance() {
             if(first) {
@@ -108,16 +108,22 @@ private:
             if(partialNoteReproduction != 0) {
                 return;
             }
-            if(silence) {
-                index++;
-                silence = false;
+
+            if(melody.getAutomaticSilence()) {
+                if(silence) {
+                    index++;
+                    silence = false;
+                } else {
+                    silence = true;
+                }
             } else {
-                silence = true;
+                index++;
             }
+            
         }
         
         /**
-         * Reset the state (i.e. like a melody not yet reproduced).
+         * Reset the state of the melody (i.e. a melody just instatiated).
          */
         void reset() {
             first = true;
@@ -127,7 +133,8 @@ private:
         }
 
         /**
-         * Save the current state of the melody, including the time to finish the current note.
+         * Save the current state of the melody, including the time to finish
+         * the current note.
          */
         void saveRemainingDuration(unsigned long supportSemiNote){
             partialNoteReproduction = supportSemiNote - millis();
@@ -138,13 +145,14 @@ private:
         }
 
         /**
-         * Save the current state of the melody, including the time to finish the current note.
+         * Call this melody to save that a partial note is reproduced
+         * (Necessary to call advance()).
          */
         void resetRemainingDuration(){
             partialNoteReproduction = 0;
         }
 
-        unsigned short getRemainingDuration(){
+        unsigned short getRemainingDuration() const {
             return partialNoteReproduction;
         }
     private:

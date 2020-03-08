@@ -63,10 +63,10 @@ Melody MelodyFactoryClass::load(String filepath){
     }
   }
 
-  return Melody(title, tempo, notes);
+  return Melody(title, tempo, notes, true);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad){
+Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence){
   if(title.length() == 0 && tempo <= 20){
     return Melody();
   }
@@ -90,10 +90,10 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notes
     return Melody();
   }
 
-  return Melody(title, tempo, notes);
+  return Melody(title, tempo, notes, autoSilence);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad){
+Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence){
   if(title.length() == 0 && tempo <= 20){
     return Melody();
   }
@@ -117,7 +117,7 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenc
     return Melody();
   }
 
-  return Melody(title, tempo, notes);
+  return Melody(title, tempo, notes, autoSilence);
 }
 
 bool MelodyFactoryClass::loadTitle(String line){
