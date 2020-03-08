@@ -31,7 +31,7 @@ public:
    * This method assumes that each note lasts 1 beat.
    * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2 consecutive notes.
    */
-  Melody load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence = true);
+  Melody load(String title, unsigned short timeUnit, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence = true);
 
   /**
    * Load the melody from code.
@@ -39,13 +39,13 @@ public:
    * This method assumes that each note lasts 1 beat.
    * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2 consecutive notes.
    */
-  Melody load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence = true);
+  Melody load(String title, unsigned short timeUnit, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence = true);
 
 private:
   enum class NoteFormat {ERROR, STRING, INTEGER};
   
   String title;
-  unsigned short tempo;
+  unsigned short timeUnit;
   NoteFormat noteFormat;
   std::shared_ptr<std::vector<NoteDuration>> notes;
   // Used to check how many note are stored in a file.
@@ -99,10 +99,10 @@ private:
   bool loadTitle(String line);
 
   /**
-   * Get tempo from line.
+   * Get time unit from line.
    * Return true on success.
    */
-  bool loadTempo(String line);
+  bool loadTimeUnit(String line);
 
   /**
    * Get number of notes.

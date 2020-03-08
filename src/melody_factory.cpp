@@ -28,7 +28,7 @@ Melody MelodyFactoryClass::load(String filepath){
     return Melody();
   }
 
-  success = loadTempo(f.readStringUntil('\n'));
+  success = loadTimeUnit(f.readStringUntil('\n'));
   if(!success){
     return Melody();
   }
@@ -63,11 +63,11 @@ Melody MelodyFactoryClass::load(String filepath){
     }
   }
 
-  return Melody(title, tempo, notes, true);
+  return Melody(title, timeUnit, notes, true);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence){
-  if(title.length() == 0 && tempo <= 20){
+Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence){
+  if(title.length() == 0 && timeUnit <= 20){
     return Melody();
   }
   if(nNotesToLoad == 0 || nNotesToLoad > maxLength ){
@@ -90,11 +90,11 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, String notes
     return Melody();
   }
 
-  return Melody(title, tempo, notes, autoSilence);
+  return Melody(title, timeUnit, notes, autoSilence);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence){
-  if(title.length() == 0 && tempo <= 20){
+Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence){
+  if(title.length() == 0 && timeUnit <= 20){
     return Melody();
   }
   if(nFrequenciesToLoad == 0 || nFrequenciesToLoad > maxLength ){
@@ -117,7 +117,7 @@ Melody MelodyFactoryClass::load(String title, unsigned short tempo, int frequenc
     return Melody();
   }
 
-  return Melody(title, tempo, notes, autoSilence);
+  return Melody(title, timeUnit, notes, autoSilence);
 }
 
 bool MelodyFactoryClass::loadTitle(String line){
@@ -131,14 +131,14 @@ bool MelodyFactoryClass::loadTitle(String line){
   return false;
 }
 
-bool MelodyFactoryClass::loadTempo(String line){
+bool MelodyFactoryClass::loadTimeUnit(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
   if(line.substring(0, 5) == "tempo"){
     String t = line.substring(6);
-    this->tempo = t.toInt();
-    if(debug) Serial.println(this->tempo);
-    if(this->tempo>20){
+    this->timeUnit = t.toInt();
+    if(debug) Serial.println(this->timeUnit);
+    if(this->timeUnit>20){
       return true;
     }
   }

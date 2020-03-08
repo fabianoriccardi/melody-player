@@ -5,11 +5,12 @@
 #include <memory>
 
 /**
- * This struct represents the couple between a note and 
- * its duration than respect to the "tempo" 
+ * A note and the relative duration. 
  */
 struct NoteDuration {
+  // the frequency of a note
   unsigned short frequency;
+  // duration of the frequency, expressed as number of "time unit"
   unsigned short duration;
 };
 
@@ -20,10 +21,10 @@ struct NoteDuration {
 class Melody {
 public:
   Melody():
-   title(""), tempo(0), notes(nullptr) {};
+   notes(nullptr) {};
   
   Melody(String title, unsigned short tempo, std::shared_ptr<std::vector<NoteDuration>> notes, bool automaticSilence):
-    title(title), tempo(tempo), notes(notes), automaticSilence(automaticSilence) {};
+    title(title), timeUnit(timeUnit), notes(notes), automaticSilence(automaticSilence) {};
 
   /**
    * Return the title of the melody.
@@ -33,10 +34,11 @@ public:
   };
 
   /**
-   * Return the default tempo.
+   * Return the base time unit (i.e. the shortest possible
+   * note in this melody), expressed in millisecond.
    */ 
-  unsigned short getTempo() const {
-    return tempo;
+  unsigned short getTimeUnit() const {
+    return timeUnit;
   };
 
   /**
@@ -78,7 +80,7 @@ public:
   
 private:
   String title;
-  unsigned short tempo;
+  unsigned short timeUnit;
   std::shared_ptr<std::vector<NoteDuration>> notes;
   const static unsigned short maxLength = 1000;
   bool automaticSilence;

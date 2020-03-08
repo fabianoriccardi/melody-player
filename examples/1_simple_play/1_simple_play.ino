@@ -25,7 +25,7 @@ void setup() {
   Melody melody = MelodyFactory.load("Nice Melody", 175, notes, 8);
   
   Serial.println(String(" Title:") + melody.getTitle());
-  Serial.println(String(" Tempo:") + melody.getTempo());
+  Serial.println(String(" Time unit:") + melody.getTimeUnit());
   Serial.print("Play in blocking mode...");
   player.play(melody);
   Serial.println("The end!");

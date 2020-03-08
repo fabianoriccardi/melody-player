@@ -26,14 +26,14 @@ void MelodyPlayer::play(){
 #else
       noTone(pin);
 #endif
-      delay(0.3f * melodyState->melody.getTempo() * note.duration);
+      delay(0.3f * melodyState->melody.getTimeUnit() * note.duration);
     } else {
 #ifdef ESP32
       ledcWriteTone(pwmChannel, note.frequency);
 #else
       tone(pin, note.frequency);
 #endif
-      delay(melodyState->melody.getTempo() * note.duration);
+      delay(melodyState->melody.getTimeUnit() * note.duration);
     }
     melodyState->advance();
   }
@@ -53,7 +53,7 @@ void changeTone(MelodyPlayer* player) {
   player->melodyState->advance();
   if(player->melodyState->getIndex() + player->melodyState->isSilence() < player->melodyState->melody.getLength()) {
   	NoteDuration note(player->melodyState->melody.getNote(player->melodyState->getIndex()));
-    int noteDur = player->melodyState->melody.getTempo() * note.duration;
+    int noteDur = player->melodyState->melody.getTimeUnit() * note.duration;
     
     float duration = player->melodyState->getRemainingDuration();
     if(duration > 0) {

@@ -46,8 +46,8 @@ void setup() {
     while(1) delay(1000);
   }
   Serial.println(String(" Title: ") + melody.getTitle());
-  Serial.println(String(" Tempo: ") + melody.getTempo() + " milliseconds");
-  Serial.println(String(" Number of notes: ") + melody.getLenght());
+  Serial.println(String(" Tempo: ") + melody.getTimeUnit() + " milliseconds");
+  Serial.println(String(" Number of notes: ") + melody.getLength());
   
   Serial.print("Play in blocking mode...");
   player.play(melody);
