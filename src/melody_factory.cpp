@@ -9,7 +9,8 @@ static void removeCarriageReturn(String& s){
 
 Melody MelodyFactoryClass::load(String filepath){
   File f = SPIFFS.open(filepath, "r");
-  
+  f.setTimeout(0);
+
   if(!f){
     Serial.println("Opening file error");
     return Melody();
