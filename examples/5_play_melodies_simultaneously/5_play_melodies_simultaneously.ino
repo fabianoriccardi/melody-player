@@ -4,8 +4,9 @@
  * This works only with playAsync(), otherwise the melodies 
  * are played sequentially.
  * 
- * Depending on your microcontroller, please check how to configure
- * multiple PWM output on the wiki.
+ * For more information about enabling multiple PWM output and
+ * limitations of your board, check the wiki.
+ * https://github.com/fabiuz7/melody-player-arduino/wiki
  */
 #include <melody_player.h>
 #include <melody_factory.h>
