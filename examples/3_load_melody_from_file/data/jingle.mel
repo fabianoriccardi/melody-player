@@ -1,7 +1,7 @@
 # Melody of Jingle Bells
 # a quarter note is expressed as "2"
 title=Jingle Bells
-tempo=100
+timeUnit=100
 length=51
 format=string
 E5,2|E5,2|E5,4|E5,2|E5,2|E5,4|E5,2|G5,2|C5,3|D5,1|

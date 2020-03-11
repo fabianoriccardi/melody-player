@@ -31,7 +31,7 @@ void setup() {
   SPIFFS.begin();
 
   Serial.println("Loading melody...");
-  Melody missingMelody = MelodyFactory.load(melodyFilePath);
+  Melody missingMelody = MelodyFactory.load(missingMelodyFilePath);
   // Check if the melody was successfully loaded
   if(!missingMelody){
     Serial.println(missingMelodyFilePath + " is really missing, trying to load another one....");
@@ -46,7 +46,7 @@ void setup() {
     while(1) delay(1000);
   }
   Serial.println(String(" Title: ") + melody.getTitle());
-  Serial.println(String(" Tempo: ") + melody.getTimeUnit() + " milliseconds");
+  Serial.println(String(" Time unit: ") + melody.getTimeUnit() + " milliseconds");
   Serial.println(String(" Number of notes: ") + melody.getLength());
   
   Serial.print("Play in blocking mode...");

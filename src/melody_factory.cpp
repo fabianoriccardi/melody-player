@@ -123,7 +123,8 @@ Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, int frequ
 bool MelodyFactoryClass::loadTitle(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
-  if(line.substring(0, 5) == "title"){
+  if(line.startsWith("title")){
+      // Skip also '='
       String title = line.substring(6);
       this->title = title;
       return true;
@@ -134,8 +135,9 @@ bool MelodyFactoryClass::loadTitle(String line){
 bool MelodyFactoryClass::loadTimeUnit(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
-  if(line.substring(0, 5) == "tempo"){
-    String t = line.substring(6);
+  if(line.startsWith("timeUnit")){
+    // Skip '='
+    String t = line.substring(9);
     this->timeUnit = t.toInt();
     if(debug) Serial.println(this->timeUnit);
     if(this->timeUnit>20){
@@ -148,7 +150,8 @@ bool MelodyFactoryClass::loadTimeUnit(String line){
 bool MelodyFactoryClass::loadNumberOfNotes(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
-  if(line.substring(0, 6) == "length"){
+  if(line.startsWith("length")){
+    // Skip also '='
     String len = line.substring(7);
     this->nNotes = len.toInt();
     if(debug) Serial.println(this->nNotes);
@@ -161,7 +164,8 @@ MelodyFactoryClass::NoteFormat MelodyFactoryClass::loadNoteFormat(String line){
   removeCarriageReturn(line);
   if(debug) Serial.println(String("Reading line:--") + line + "-- Len:" + line.length());
   String format;
-  if(line.substring(0, 6) == "format"){
+  if(line.startsWith("format")){
+    // Skip also '='
     format = line.substring(7);
     if(debug) Serial.println(format);
   }

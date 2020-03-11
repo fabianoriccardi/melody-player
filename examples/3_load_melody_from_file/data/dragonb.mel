@@ -1,5 +1,5 @@
 title=Dragon Ball
-tempo=50
+timeUnit=50
 length=8
 format=string
 E5,6|C5,6|G4,6|E5,4|C5,6|G4,4|E5,6|F5,6
