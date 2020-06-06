@@ -219,7 +219,7 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
 bool MelodyFactoryClass::parseRtttlNote(String s){
   int i = 0;
 
-  unsigned int relativeDuration = this->duration;
+  unsigned short relativeDuration = this->duration;
   // Optional number: note duration (e.g 4=quarter note, ...)
   if(isdigit(s.charAt(i))) {
     unsigned int temp = getUnsignedInt(s, i);
