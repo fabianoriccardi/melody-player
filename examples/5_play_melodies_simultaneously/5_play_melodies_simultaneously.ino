@@ -11,8 +11,8 @@
 #include <melody_player.h>
 #include <melody_factory.h>
 
-int buzzerPin1 = D5;
-int buzzerPin2 = D6;
+int buzzerPin1 = 4;
+int buzzerPin2 = 5;
 
 MelodyPlayer player1(buzzerPin1);
 MelodyPlayer player2(buzzerPin2);

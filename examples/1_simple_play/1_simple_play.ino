@@ -8,7 +8,7 @@
 #include <melody_player.h>
 #include <melody_factory.h>
 
-int buzzerPin = D6;
+int buzzerPin = 4;
 
 MelodyPlayer player(buzzerPin);
 
