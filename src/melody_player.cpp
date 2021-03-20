@@ -180,16 +180,16 @@ void MelodyPlayer::duplicateMelodyTo(MelodyPlayer& destPlayer){
 }
 
 #ifdef ESP32
-MelodyPlayer::MelodyPlayer(unsigned char pin, unsigned char pwmChannel):
-    pin(pin), pwmChannel(pwmChannel), state(State::STOP), melodyState(nullptr) {
+MelodyPlayer::MelodyPlayer(unsigned char pin, unsigned char pwmChannel, bool offLevel):
+    pin(pin), pwmChannel(pwmChannel), offLevel(offLevel), state(State::STOP), melodyState(nullptr) {
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, HIGH);
+  digitalWrite(pin, offLevel);
 };
 #else
-MelodyPlayer::MelodyPlayer(unsigned char pin):
-    pin(pin), state(State::STOP), melodyState(nullptr) {
+MelodyPlayer::MelodyPlayer(unsigned char pin, bool offLevel):
+    pin(pin), offLevel(offLevel), state(State::STOP), melodyState(nullptr) {
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, HIGH);
+  digitalWrite(pin, offLevel);
 };
 #endif
 
@@ -214,10 +214,11 @@ void MelodyPlayer::turnOff() {
   ledcWrite(pwmChannel, 0);
   ledcDetachPin(pin);
 #else
-  // Remember that this will set LOW output
+  // Remember that this will set LOW output,
+  // it doesn't mean that buzzer is off.
   noTone(pin);
 #endif
 
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, HIGH);
+  digitalWrite(pin, offLevel);
 }

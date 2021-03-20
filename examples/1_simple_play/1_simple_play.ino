@@ -10,7 +10,8 @@
 
 int buzzerPin = 4;
 
-MelodyPlayer player(buzzerPin);
+// specify the buzzer's pin and the standby voltage level
+MelodyPlayer player(buzzerPin, HIGH);
 
 void setup() {
   Serial.begin(115200);

@@ -12,9 +12,9 @@ public:
      * pwmChannel is optional and you have to configure it only if you need to play
      * simultaneous melodies.
      */
-    MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0);
+    MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0, bool offLevel = HIGH);
 #else
-    MelodyPlayer(unsigned char pin);
+    MelodyPlayer(unsigned char pin, bool offLevel = HIGH);
 #endif
 
   	/**
@@ -78,6 +78,17 @@ private:
 #ifdef ESP32
     unsigned char pwmChannel;
 #endif
+
+  /**
+   * The voltage to really turn off the buzzer (no current consumption).
+   * 
+   * Passive buzzers have 2 states: the "natural" state (no power consumption)
+   * and the "non-natural" state (high power consumption).
+   * To emit sound, it oscillate between these 2 states. If it stops
+   * in the non-natural state, it doesn't emit sound but it still consume energy,
+   * so such state should be avoided to save energy.
+   */
+  bool offLevel;
 
     /**
      * Store the current state of a Melody.
