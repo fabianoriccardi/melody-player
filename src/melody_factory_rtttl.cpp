@@ -208,7 +208,12 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
-  if(!(temp >= 10 && temp <= 200)){
+
+  // BPM is arbitrarily limited to 300. You may try to increase it, but remember that
+  // actually, the minimum note length is 60(seconds)/300(bpm)/32(minimum note length) = 6.25ms.
+  // If you reduce this duration, you may not be able to keep up the pace to play a smooth  
+  // async playback while doing other operations.
+  if(!(10<=temp && temp <= 300)){
     return 0;
   }
   // Discard ','
