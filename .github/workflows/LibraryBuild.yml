@@ -18,7 +18,7 @@ jobs:
 
     env:
       # Comma separated list without double quotes around the list
-      REQUIRED_LIBRARIES: Melody Player
+      REQUIRED_LIBRARIES:
 
     strategy:
       # The Matrix contains all the configuration to be tested. For each configuration, all the examples are tested
