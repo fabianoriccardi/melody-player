@@ -5,17 +5,19 @@
     "name": "Fabiano Riccardi",
     "email": "fabiano.riccardi@outlook.com"
   },
-  "description": "This library provides an intuitive interface to play melodies on buzzers.",
+  "description": "This library provides an intuitive interface to play melodies on buzzers. The melodies can be stored in file systems (SPIFFS or LittleFS) or hardcoded in your sketch. Support RTTTL.",
   "keywords": [
     "buzzer",
     "tune",
     "melody",
-    "rttl",
-    "piezo"
+    "rtttl",
+    "piezo",
+    "arduino-library",
+    "sound"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fabiuz7/melody-player-arduino"
+    "url": "https://github.com/fabianoriccardi/melody-player"
   },
   "licence": "LGPL-2.1-or-later",
   "frameworks": [
