@@ -17,7 +17,7 @@
     "type": "git",
     "url": "https://github.com/fabiuz7/melody-player-arduino"
   },
-  "licence": "GPL-2.0-only",
+  "licence": "LGPL-2.1-or-later",
   "frameworks": [
     "arduino"
   ],
