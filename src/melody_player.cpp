@@ -2,7 +2,7 @@
  *   This file is part of Melody Player, a library for Arduino             *
  *   to play notes on piezoelectric buzzers.                               *
  *                                                                         *
- *   Copyright (C) 2021-2022  Fabiano Riccardi                             *
+ *   Copyright (C) 2020-2022  Fabiano Riccardi                             *
  *                                                                         *
  *   This library is free software; you can redistribute                   *
  *   it and/or modify it under the terms of the GNU Lesser General Public  *
