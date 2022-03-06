@@ -6,6 +6,7 @@
  *************************************************/
 
 #include <unordered_map>
+#include <string>
 
 /**
  * NOTE: Use carefully with Arduino: this map is quite large
