@@ -26,7 +26,7 @@
 #include <vector>
 
 /**
- * A note and the relative duration. 
+ * A note and the relative duration.
  */
 struct NoteDuration {
   // the frequency of a note
@@ -36,16 +36,16 @@ struct NoteDuration {
 };
 
 /**
- * This class stores the data to play a melody. 
+ * This class stores the data to play a melody.
  * To eases the creation of a melody, you may use MelodyFactory class.
  */
 class Melody {
 public:
-  Melody():
-   notes(nullptr) {};
-  
-  Melody(String title, unsigned short timeUnit, std::shared_ptr<std::vector<NoteDuration>> notes, bool automaticSilence):
-    title(title), timeUnit(timeUnit), notes(notes), automaticSilence(automaticSilence) {};
+  Melody()
+    : notes(nullptr){};
+
+  Melody(String title, unsigned short timeUnit, std::shared_ptr<std::vector<NoteDuration>> notes, bool automaticSilence)
+    : title(title), timeUnit(timeUnit), notes(notes), automaticSilence(automaticSilence){};
 
   /**
    * Return the title of the melody.
@@ -57,7 +57,7 @@ public:
   /**
    * Return the base time unit (i.e. the shortest possible
    * note in this melody), expressed in millisecond.
-   */ 
+   */
   unsigned short getTimeUnit() const {
     return timeUnit;
   };
@@ -66,7 +66,7 @@ public:
    * Get number of notes.
    */
   unsigned short getLength() const {
-    if(notes == nullptr) return 0;
+    if (notes == nullptr) return 0;
     return (*notes).size();
   }
 
@@ -75,7 +75,7 @@ public:
    * Check length or validity of melody before call this method.
    */
   NoteDuration getNote(unsigned short i) const {
-    if(i < (*notes).size()) {
+    if (i < (*notes).size()) {
       return (*notes)[i];
     }
     return (*notes).back();
@@ -98,15 +98,15 @@ public:
   explicit operator bool() const {
     return isValid();
   }
-  
+
 private:
   String title;
   unsigned short timeUnit;
   std::shared_ptr<std::vector<NoteDuration>> notes;
   const static unsigned short maxLength = 1000;
   bool automaticSilence;
-  
+
   const static bool debug = false;
 };
 
-#endif // END MELODY_H
+#endif  // END MELODY_H

@@ -20,8 +20,7 @@
 #include "melody_factory.h"
 #include "notes.h"
 
-const uint16_t sourceNotes[] =
-{ 
+const uint16_t sourceNotes[] = {
   0,
   NOTE_C4,
   NOTE_CS4,
@@ -75,40 +74,40 @@ const uint16_t sourceNotes[] =
   NOTE_AS7,
   NOTE_B7,
 
-  2*NOTE_C7,
-  2*NOTE_CS7,
-  2*NOTE_D7,
-  2*NOTE_DS7,
-  2*NOTE_E7,
-  2*NOTE_F7,
-  2*NOTE_FS7,
-  2*NOTE_G7,
-  2*NOTE_GS7,
-  2*NOTE_A7,
-  2*NOTE_AS7,
-  2*NOTE_B7,
+  2 * NOTE_C7,
+  2 * NOTE_CS7,
+  2 * NOTE_D7,
+  2 * NOTE_DS7,
+  2 * NOTE_E7,
+  2 * NOTE_F7,
+  2 * NOTE_FS7,
+  2 * NOTE_G7,
+  2 * NOTE_GS7,
+  2 * NOTE_A7,
+  2 * NOTE_AS7,
+  2 * NOTE_B7,
 };
 
 Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
   File f = SPIFFS.open(filepath, "r");
   f.setTimeout(0);
 
-  if(!f){
+  if (!f) {
     Serial.println("Opening file error");
     return Melody();
   }
 
   String title = f.readStringUntil(':');
   title.trim();
-  if(debug) Serial.println(String("Title:") + title);
-  if(title.length() == 0 ){
+  if (debug) Serial.println(String("Title:") + title);
+  if (title.length() == 0) {
     return Melody();
   }
-  
+
   String values = f.readStringUntil(':');
   values.trim();
-  if(debug) Serial.println(String("Default values:") + values);
-  if(values.length() == 0) {
+  if (debug) Serial.println(String("Default values:") + values);
+  if (values.length() == 0) {
     return Melody();
   }
 
@@ -119,40 +118,40 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
 
   notes = std::make_shared<std::vector<NoteDuration>>();
   bool result = true;
-  while(f.available() && notes->size() < maxLength && result) {
+  while (f.available() && notes->size() < maxLength && result) {
     String s = f.readStringUntil(',');
     s.trim();
     result = parseRtttlNote(s);
   }
-  if(result && notes->size() > 0) {
+  if (result && notes->size() > 0) {
     return Melody(title, timeUnit, notes, false);
   }
 
   return Melody();
 }
 
-Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]){
+Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
   String title;
   int i = 0;
-  while(rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
+  while (rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
     title.concat(rtttlMelody[i]);
     i++;
   }
 
-  if(title.length() == 0 || rtttlMelody[i] == 0) {
+  if (title.length() == 0 || rtttlMelody[i] == 0) {
     return Melody();
   }
 
-  //skip ':'
+  // skip ':'
   i++;
 
   String defaultParameters;
-  while(rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
+  while (rtttlMelody[i] != 0 && rtttlMelody[i] != ':') {
     defaultParameters.concat(rtttlMelody[i]);
     i++;
   }
 
-  if(rtttlMelody[i] == 0){
+  if (rtttlMelody[i] == 0) {
     return Melody();
   }
 
@@ -162,24 +161,24 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]){
   // 32 because it is the shortest note!
   int timeUnit = 60 * 1000 * 4 / beat / 32;
 
-  //skip ':'
+  // skip ':'
   i++;
 
   notes = std::make_shared<std::vector<NoteDuration>>();
   // Read notes
-  while(rtttlMelody[i] != 0) {
+  while (rtttlMelody[i] != 0) {
     String note;
-    while(rtttlMelody[i] != 0 && rtttlMelody[i] != ',') {
+    while (rtttlMelody[i] != 0 && rtttlMelody[i] != ',') {
       note.concat(rtttlMelody[i]);
       i++;
     }
     note.trim();
     parseRtttlNote(note);
-    if(rtttlMelody[i] == ',') {
+    if (rtttlMelody[i] == ',') {
       i++;
     }
   }
-  if(notes->size() > 0) {
+  if (notes->size() > 0) {
     return Melody(title, timeUnit, notes, false);
   }
 
@@ -192,7 +191,7 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]){
  */
 unsigned int getUnsignedInt(String& s, int& startFrom) {
   unsigned int temp = 0;
-  while(isDigit(s.charAt(startFrom))) {
+  while (isDigit(s.charAt(startFrom))) {
     temp = (temp * 10) + s.charAt(startFrom) - '0';
     startFrom++;
   }
@@ -203,7 +202,7 @@ unsigned int MelodyFactoryClass::parseDuration(String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
-  if(temp != 1 && temp != 2 && temp != 4 && temp != 8 && temp != 16 && temp != 32){
+  if (temp != 1 && temp != 2 && temp != 4 && temp != 8 && temp != 16 && temp != 32) {
     return 0;
   }
   // Discard ','
@@ -215,7 +214,7 @@ unsigned int MelodyFactoryClass::parseOctave(String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
-  if(temp < 4 || temp > 7){
+  if (temp < 4 || temp > 7) {
     return 0;
   }
   // Discard ','
@@ -230,9 +229,9 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
 
   // BPM is arbitrarily limited to 300. You may try to increase it, but remember that
   // actually, the minimum note length is 60(seconds)/300(bpm)/32(minimum note length) = 6.25ms.
-  // If you reduce this duration, you may not be able to keep up the pace to play a smooth  
+  // If you reduce this duration, you may not be able to keep up the pace to play a smooth
   // async playback while doing other operations.
-  if(!(10<=temp && temp <= 300)){
+  if (!(10 <= temp && temp <= 300)) {
     return 0;
   }
   // Discard ','
@@ -240,14 +239,14 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
   return temp;
 }
 
-bool MelodyFactoryClass::parseRtttlNote(String s){
+bool MelodyFactoryClass::parseRtttlNote(String s) {
   int i = 0;
 
   unsigned short relativeDuration = this->duration;
   // Optional number: note duration (e.g 4=quarter note, ...)
-  if(isdigit(s.charAt(i))) {
+  if (isdigit(s.charAt(i))) {
     unsigned int temp = getUnsignedInt(s, i);
-    if(temp){
+    if (temp) {
       relativeDuration = temp;
     }
   }
@@ -271,10 +270,9 @@ bool MelodyFactoryClass::parseRtttlNote(String s){
     relativeDuration = 0;
   }
 
-
   // note (p is silence)
   int note = 0;
-  switch (s.charAt(i)){
+  switch (s.charAt(i)) {
     case 'c':
       note = 1;
       break;
@@ -332,34 +330,34 @@ bool MelodyFactoryClass::parseRtttlNote(String s){
     freq = 0;
   }
 
-  notes->push_back({.frequency = freq, .duration = relativeDuration});
+  notes->push_back({ .frequency = freq, .duration = relativeDuration });
   return true;
 }
 
-void MelodyFactoryClass::parseDefaultValues(String values){
+void MelodyFactoryClass::parseDefaultValues(String values) {
   int i = 0;
 
-  if(values.charAt(i) == 'd'){
+  if (values.charAt(i) == 'd') {
     i++;
   }
   duration = parseDuration(values, i);
-  if(duration == 0) {
+  if (duration == 0) {
     duration = defaultDuration;
   }
 
-  if(values.charAt(i) == 'o'){
+  if (values.charAt(i) == 'o') {
     i++;
   }
   octave = parseOctave(values, i);
-  if(octave == 0) {
+  if (octave == 0) {
     octave = defaultOctave;
   }
 
-  if(values.charAt(i) == 'b'){
+  if (values.charAt(i) == 'b') {
     i++;
     beat = parseBeat(values, i);
   }
-  if(beat == 0) {
+  if (beat == 0) {
     beat = defaultBeat;
   }
 }

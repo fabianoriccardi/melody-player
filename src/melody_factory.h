@@ -61,8 +61,10 @@ public:
   Melody load(String title, unsigned short timeUnit, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence = true);
 
 private:
-  enum class NoteFormat {ERROR, STRING, INTEGER};
-  
+  enum class NoteFormat { ERROR,
+                          STRING,
+                          INTEGER };
+
   String title;
   unsigned short timeUnit;
   NoteFormat noteFormat;
@@ -74,7 +76,7 @@ private:
   ///////////// RTTTL helpers
   /**
    * It is the default duration of a note. For example,
-   * "4" means that each note with no duration specifier 
+   * "4" means that each note with no duration specifier
    * is by default considered a quarter note. Possibile values:
    * 1 - whole note
    * 2 - half note
@@ -108,7 +110,7 @@ private:
   unsigned int parseOctave(String& s, int& startFrom);
   unsigned int parseBeat(String& s, int& startFrom);
   bool parseRtttlNote(String s);
-  
+
   //////////// END RTTTL helpers
 
   /**
@@ -150,4 +152,4 @@ private:
 
 extern MelodyFactoryClass MelodyFactory;
 
-#endif // END MELODY_FACTORY_H
+#endif  // END MELODY_FACTORY_H
