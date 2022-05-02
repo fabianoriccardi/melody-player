@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.config-name }} - test compiling examples
+    name: Compile for ${{ matrix.arduino-platform }}
 
     # Target OS
     runs-on: ubuntu-20.04
@@ -70,11 +70,9 @@ jobs:
           library-manager: update
 
       - name: Compile all examples using the arduino-test-compile action
-        uses: ArminJo/arduino-test-compile@master
+        # Specify the git tag, not the Github release
+        uses: ArminJo/arduino-test-compile@v3.2.0
         with:
           arduino-board-fqbn: ${{ matrix.arduino-boards-fqbn }}
           arduino-platform: ${{ matrix.arduino-platform }}
           platform-url: ${{ matrix.platform-url }}
-          required-libraries: ${{ env.REQUIRED_LIBRARIES }}
-          sketches-exclude: ${{ matrix.sketches-exclude }}
-          build-properties: ${{ toJson(matrix.build-properties) }}
