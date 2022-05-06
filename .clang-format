@@ -2,6 +2,10 @@
 # CHANGES: 
 # - ReflowComments: true
 # - MaxEmptyLinesToKeep: 1
+# - ColumnLimit: 100
+# - BreakStringLiterals: true
+# - AlignConsecutiveMacros: AcrossEmptyLines
+# - AlignArrayOfStructures: Left
 
 Language: Cpp
 # LLVM is the default style setting, used when a configuration option is not set here
@@ -58,8 +62,8 @@ BreakBeforeBraces: Attach
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
-BreakStringLiterals: false
-ColumnLimit: 0
+BreakStringLiterals: true
+ColumnLimit: 100
 # "" matches none
 CommentPragmas: ""
 CompactNamespaces: false
@@ -146,3 +150,5 @@ TypenameMacros: []
 UseCRLF: false
 UseTab: Never
 WhitespaceSensitiveMacros: []
+AlignConsecutiveMacros: AcrossEmptyLines
+AlignArrayOfStructures: Left
