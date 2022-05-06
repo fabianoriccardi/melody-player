@@ -41,8 +41,7 @@ struct NoteDuration {
  */
 class Melody {
 public:
-  Melody()
-    : notes(nullptr){};
+  Melody() : notes(nullptr){};
 
   Melody(String title, unsigned short timeUnit, std::shared_ptr<std::vector<NoteDuration>> notes, bool automaticSilence)
     : title(title), timeUnit(timeUnit), notes(notes), automaticSilence(automaticSilence){};
@@ -75,9 +74,7 @@ public:
    * Check length or validity of melody before call this method.
    */
   NoteDuration getNote(unsigned short i) const {
-    if (i < (*notes).size()) {
-      return (*notes)[i];
-    }
+    if (i < (*notes).size()) { return (*notes)[i]; }
     return (*notes).back();
   };
 

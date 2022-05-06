@@ -20,6 +20,7 @@
 #include "melody_factory.h"
 #include "notes.h"
 
+// clang-format off
 const uint16_t sourceNotes[] = {
   0,
   NOTE_C4,
@@ -87,6 +88,7 @@ const uint16_t sourceNotes[] = {
   2 * NOTE_AS7,
   2 * NOTE_B7,
 };
+// clang-format on
 
 Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
   File f = SPIFFS.open(filepath, "r");
@@ -100,16 +102,12 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
   String title = f.readStringUntil(':');
   title.trim();
   if (debug) Serial.println(String("Title:") + title);
-  if (title.length() == 0) {
-    return Melody();
-  }
+  if (title.length() == 0) { return Melody(); }
 
   String values = f.readStringUntil(':');
   values.trim();
   if (debug) Serial.println(String("Default values:") + values);
-  if (values.length() == 0) {
-    return Melody();
-  }
+  if (values.length() == 0) { return Melody(); }
 
   parseDefaultValues(values);
 
@@ -123,9 +121,7 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
     s.trim();
     result = parseRtttlNote(s);
   }
-  if (result && notes->size() > 0) {
-    return Melody(title, timeUnit, notes, false);
-  }
+  if (result && notes->size() > 0) { return Melody(title, timeUnit, notes, false); }
 
   return Melody();
 }
@@ -138,9 +134,7 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
     i++;
   }
 
-  if (title.length() == 0 || rtttlMelody[i] == 0) {
-    return Melody();
-  }
+  if (title.length() == 0 || rtttlMelody[i] == 0) { return Melody(); }
 
   // skip ':'
   i++;
@@ -151,9 +145,7 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
     i++;
   }
 
-  if (rtttlMelody[i] == 0) {
-    return Melody();
-  }
+  if (rtttlMelody[i] == 0) { return Melody(); }
 
   defaultParameters.trim();
   parseDefaultValues(defaultParameters);
@@ -174,13 +166,9 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
     }
     note.trim();
     parseRtttlNote(note);
-    if (rtttlMelody[i] == ',') {
-      i++;
-    }
+    if (rtttlMelody[i] == ',') { i++; }
   }
-  if (notes->size() > 0) {
-    return Melody(title, timeUnit, notes, false);
-  }
+  if (notes->size() > 0) { return Melody(title, timeUnit, notes, false); }
 
   return Melody();
 }
@@ -202,9 +190,7 @@ unsigned int MelodyFactoryClass::parseDuration(String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
-  if (temp != 1 && temp != 2 && temp != 4 && temp != 8 && temp != 16 && temp != 32) {
-    return 0;
-  }
+  if (temp != 1 && temp != 2 && temp != 4 && temp != 8 && temp != 16 && temp != 32) { return 0; }
   // Discard ','
   startFrom++;
   return temp;
@@ -214,9 +200,7 @@ unsigned int MelodyFactoryClass::parseOctave(String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
-  if (temp < 4 || temp > 7) {
-    return 0;
-  }
+  if (temp < 4 || temp > 7) { return 0; }
   // Discard ','
   startFrom++;
   return temp;
@@ -231,9 +215,7 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
   // actually, the minimum note length is 60(seconds)/300(bpm)/32(minimum note length) = 6.25ms.
   // If you reduce this duration, you may not be able to keep up the pace to play a smooth
   // async playback while doing other operations.
-  if (!(10 <= temp && temp <= 300)) {
-    return 0;
-  }
+  if (!(10 <= temp && temp <= 300)) { return 0; }
   // Discard ','
   startFrom++;
   return temp;
@@ -246,9 +228,7 @@ bool MelodyFactoryClass::parseRtttlNote(String s) {
   // Optional number: note duration (e.g 4=quarter note, ...)
   if (isdigit(s.charAt(i))) {
     unsigned int temp = getUnsignedInt(s, i);
-    if (temp) {
-      relativeDuration = temp;
-    }
+    if (temp) { relativeDuration = temp; }
   }
 
   // To match struct NoteDuration format, I need the direct
@@ -273,30 +253,15 @@ bool MelodyFactoryClass::parseRtttlNote(String s) {
   // note (p is silence)
   int note = 0;
   switch (s.charAt(i)) {
-    case 'c':
-      note = 1;
-      break;
-    case 'd':
-      note = 3;
-      break;
-    case 'e':
-      note = 5;
-      break;
-    case 'f':
-      note = 6;
-      break;
-    case 'g':
-      note = 8;
-      break;
-    case 'a':
-      note = 10;
-      break;
-    case 'b':
-      note = 12;
-      break;
+    case 'c': note = 1; break;
+    case 'd': note = 3; break;
+    case 'e': note = 5; break;
+    case 'f': note = 6; break;
+    case 'g': note = 8; break;
+    case 'a': note = 10; break;
+    case 'b': note = 12; break;
     case 'p':
-    default:
-      note = 0;
+    default: note = 0;
   }
 
   i++;
@@ -337,27 +302,17 @@ bool MelodyFactoryClass::parseRtttlNote(String s) {
 void MelodyFactoryClass::parseDefaultValues(String values) {
   int i = 0;
 
-  if (values.charAt(i) == 'd') {
-    i++;
-  }
+  if (values.charAt(i) == 'd') { i++; }
   duration = parseDuration(values, i);
-  if (duration == 0) {
-    duration = defaultDuration;
-  }
+  if (duration == 0) { duration = defaultDuration; }
 
-  if (values.charAt(i) == 'o') {
-    i++;
-  }
+  if (values.charAt(i) == 'o') { i++; }
   octave = parseOctave(values, i);
-  if (octave == 0) {
-    octave = defaultOctave;
-  }
+  if (octave == 0) { octave = defaultOctave; }
 
   if (values.charAt(i) == 'b') {
     i++;
     beat = parseBeat(values, i);
   }
-  if (beat == 0) {
-    beat = defaultBeat;
-  }
+  if (beat == 0) { beat = defaultBeat; }
 }

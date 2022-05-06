@@ -22,15 +22,12 @@
 /**
  * https://stackoverflow.com/questions/24609271/errormake-unique-is-not-a-member-of-std
  */
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
+template<typename T, typename... Args> std::unique_ptr<T> make_unique(Args&&... args) {
   return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 void MelodyPlayer::play() {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   turnOn();
   state = State::PLAY;
@@ -38,7 +35,8 @@ void MelodyPlayer::play() {
   melodyState->advance();
   while (melodyState->getIndex() + melodyState->isSilence() < melodyState->melody.getLength()) {
     NoteDuration note(melodyState->melody.getNote(melodyState->getIndex()));
-    if (debug) Serial.println(String("Playing: frequency:") + note.frequency + " duration:" + note.duration);
+    if (debug)
+      Serial.println(String("Playing: frequency:") + note.frequency + " duration:" + note.duration);
     if (melodyState->isSilence()) {
 #ifdef ESP32
       ledcWriteTone(pwmChannel, 0);
@@ -60,9 +58,7 @@ void MelodyPlayer::play() {
 }
 
 void MelodyPlayer::play(Melody& melody) {
-  if (!melody) {
-    return;
-  }
+  if (!melody) { return; }
   melodyState = make_unique<MelodyState>(melody);
   play();
 }
@@ -70,7 +66,8 @@ void MelodyPlayer::play(Melody& melody) {
 void changeTone(MelodyPlayer* player) {
   // The last silence is not reproduced
   player->melodyState->advance();
-  if (player->melodyState->getIndex() + player->melodyState->isSilence() < player->melodyState->melody.getLength()) {
+  if (player->melodyState->getIndex() + player->melodyState->isSilence()
+      < player->melodyState->melody.getLength()) {
     NoteDuration note(player->melodyState->melody.getNote(player->melodyState->getIndex()));
     int noteDur = player->melodyState->melody.getTimeUnit() * note.duration;
 
@@ -84,7 +81,9 @@ void changeTone(MelodyPlayer* player) {
         duration = 1.0f * noteDur;
       }
     }
-    if (player->debug) Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + duration + " iteration=" + player->melodyState->getIndex());
+    if (player->debug)
+      Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + duration
+                     + " iteration=" + player->melodyState->getIndex());
 
     if (player->melodyState->isSilence()) {
 #ifdef ESP32
@@ -118,9 +117,7 @@ void changeTone(MelodyPlayer* player) {
 }
 
 void MelodyPlayer::playAsync() {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   turnOn();
   state = State::PLAY;
@@ -134,17 +131,13 @@ void MelodyPlayer::playAsync() {
 }
 
 void MelodyPlayer::playAsync(Melody& melody) {
-  if (!melody) {
-    return;
-  }
+  if (!melody) { return; }
   melodyState = make_unique<MelodyState>(melody);
   playAsync();
 }
 
 void MelodyPlayer::stop() {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   haltPlay();
   state = State::STOP;
@@ -152,9 +145,7 @@ void MelodyPlayer::stop() {
 }
 
 void MelodyPlayer::pause() {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   haltPlay();
   state = State::PAUSE;
@@ -162,9 +153,7 @@ void MelodyPlayer::pause() {
 }
 
 void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer) {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   destPlayer.stop();
 
@@ -183,9 +172,7 @@ void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer) {
 }
 
 void MelodyPlayer::duplicateMelodyTo(MelodyPlayer& destPlayer) {
-  if (melodyState == nullptr) {
-    return;
-  }
+  if (melodyState == nullptr) { return; }
 
   destPlayer.stop();
   destPlayer.melodyState = make_unique<MelodyState>(*(this->melodyState));

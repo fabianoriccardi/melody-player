@@ -48,22 +48,24 @@ public:
    * Load the melody from code.
    * Notes are represented as string accordigly to english notation (i.e. "C4", "G3", "G6").
    * This method assumes that each note lasts 1 beat.
-   * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2 consecutive notes.
+   * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2
+   * consecutive notes.
    */
-  Melody load(String title, unsigned short timeUnit, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence = true);
+  Melody load(String title, unsigned short timeUnit, String notesToLoad[],
+              unsigned short nNotesToLoad, bool autoSilence = true);
 
   /**
    * Load the melody from code.
    * frequenciesToLoad are intenger numbers expressing the real reproduced frequency.
    * This method assumes that each note lasts 1 beat.
-   * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2 consecutive notes.
+   * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2
+   * consecutive notes.
    */
-  Melody load(String title, unsigned short timeUnit, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence = true);
+  Melody load(String title, unsigned short timeUnit, int frequenciesToLoad[],
+              unsigned short nFrequenciesToLoad, bool autoSilence = true);
 
 private:
-  enum class NoteFormat { ERROR,
-                          STRING,
-                          INTEGER };
+  enum class NoteFormat { ERROR, STRING, INTEGER };
 
   String title;
   unsigned short timeUnit;

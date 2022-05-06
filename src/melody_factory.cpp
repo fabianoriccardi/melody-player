@@ -21,9 +21,7 @@
 #include "pitches_unordered_map.h"
 
 static void removeCarriageReturn(String& s) {
-  if (s.charAt(s.length() - 1) == '\r') {
-    s = s.substring(0, s.length() - 1);
-  }
+  if (s.charAt(s.length() - 1) == '\r') { s = s.substring(0, s.length() - 1); }
 }
 
 Melody MelodyFactoryClass::load(String filepath) {
@@ -37,25 +35,17 @@ Melody MelodyFactoryClass::load(String filepath) {
 
   // Skip multi-line comments at the begin of the file
   String line = f.readStringUntil('\n');
-  while (line.charAt(0) == '#') {
-    line = f.readStringUntil('\n');
-  }
+  while (line.charAt(0) == '#') { line = f.readStringUntil('\n'); }
 
   bool success = false;
   success = loadTitle(line);
-  if (!success) {
-    return Melody();
-  }
+  if (!success) { return Melody(); }
 
   success = loadTimeUnit(f.readStringUntil('\n'));
-  if (!success) {
-    return Melody();
-  }
+  if (!success) { return Melody(); }
 
   success = loadNumberOfNotes(f.readStringUntil('\n'));
-  if (!success) {
-    return Melody();
-  }
+  if (!success) { return Melody(); }
 
   NoteFormat noteFormat = loadNoteFormat(f.readStringUntil('\n'));
   if (noteFormat == NoteFormat::ERROR) {
@@ -64,7 +54,8 @@ Melody MelodyFactoryClass::load(String filepath) {
     this->noteFormat = noteFormat;
   }
 
-  if (debug) Serial.println(String("This melody object will take at least: ") + (sizeof(NoteDuration) * nNotes) + "bytes");
+  if (debug)
+    Serial.println(String("This melody object will take at least: ") + (sizeof(NoteDuration) * nNotes) + "bytes");
   if (nNotes < maxLength) {
     notes = std::make_shared<std::vector<NoteDuration>>();
     notes->reserve(nNotes);
@@ -84,17 +75,12 @@ Melody MelodyFactoryClass::load(String filepath) {
   return Melody(title, timeUnit, notes, true);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, String notesToLoad[], unsigned short nNotesToLoad, bool autoSilence) {
-  if (title.length() == 0 && timeUnit <= 20) {
-    return Melody();
-  }
-  if (nNotesToLoad == 0 || nNotesToLoad > maxLength) {
-    return Melody();
-  }
+Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, String notesToLoad[],
+                                unsigned short nNotesToLoad, bool autoSilence) {
+  if (title.length() == 0 && timeUnit <= 20) { return Melody(); }
+  if (nNotesToLoad == 0 || nNotesToLoad > maxLength) { return Melody(); }
 
-  if (notesToLoad == nullptr) {
-    return Melody();
-  }
+  if (notesToLoad == nullptr) { return Melody(); }
 
   notes = std::make_shared<std::vector<NoteDuration>>();
   notes->reserve(nNotesToLoad);
@@ -104,24 +90,17 @@ Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, String no
     String noteDuration = notesToLoad[notes->size()] + ",1";
     error = !loadNote(noteDuration);
   }
-  if (error) {
-    return Melody();
-  }
+  if (error) { return Melody(); }
 
   return Melody(title, timeUnit, notes, autoSilence);
 }
 
-Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, int frequenciesToLoad[], unsigned short nFrequenciesToLoad, bool autoSilence) {
-  if (title.length() == 0 && timeUnit <= 20) {
-    return Melody();
-  }
-  if (nFrequenciesToLoad == 0 || nFrequenciesToLoad > maxLength) {
-    return Melody();
-  }
+Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, int frequenciesToLoad[],
+                                unsigned short nFrequenciesToLoad, bool autoSilence) {
+  if (title.length() == 0 && timeUnit <= 20) { return Melody(); }
+  if (nFrequenciesToLoad == 0 || nFrequenciesToLoad > maxLength) { return Melody(); }
 
-  if (frequenciesToLoad == nullptr) {
-    return Melody();
-  }
+  if (frequenciesToLoad == nullptr) { return Melody(); }
 
   notes = std::make_shared<std::vector<NoteDuration>>();
   notes->reserve(nFrequenciesToLoad);
@@ -131,9 +110,7 @@ Melody MelodyFactoryClass::load(String title, unsigned short timeUnit, int frequ
     String noteDuration = String(frequenciesToLoad[notes->size()]) + ",1";
     error = !loadNote(noteDuration);
   }
-  if (error) {
-    return Melody();
-  }
+  if (error) { return Melody(); }
 
   return Melody(title, timeUnit, notes, autoSilence);
 }
@@ -158,9 +135,7 @@ bool MelodyFactoryClass::loadTimeUnit(String line) {
     String t = line.substring(9);
     this->timeUnit = t.toInt();
     if (debug) Serial.println(this->timeUnit);
-    if (this->timeUnit > 20) {
-      return true;
-    }
+    if (this->timeUnit > 20) { return true; }
   }
   return false;
 }

@@ -114,8 +114,7 @@ private:
    */
   class MelodyState {
   public:
-    MelodyState()
-      : first(true), index(0), partialNoteReproduction(0){};
+    MelodyState() : first(true), index(0), partialNoteReproduction(0){};
     MelodyState(const Melody& melody)
       : melody(melody), first(true), silence(false), index(0), partialNoteReproduction(0){};
     Melody melody;
@@ -137,9 +136,7 @@ private:
         first = false;
         return;
       }
-      if (partialNoteReproduction != 0) {
-        return;
-      }
+      if (partialNoteReproduction != 0) { return; }
 
       if (melody.getAutomaticSilence()) {
         if (silence) {
@@ -170,9 +167,7 @@ private:
     void saveRemainingDuration(unsigned long supportSemiNote) {
       partialNoteReproduction = supportSemiNote - millis();
       // Threshold values, to avoid Ticker trigger too early
-      if (partialNoteReproduction < 10) {
-        partialNoteReproduction = 0;
-      }
+      if (partialNoteReproduction < 10) { partialNoteReproduction = 0; }
     }
 
     /**
@@ -199,9 +194,7 @@ private:
     unsigned short partialNoteReproduction;
   };
 
-  enum class State { STOP,
-                     PLAY,
-                     PAUSE };
+  enum class State { STOP, PLAY, PAUSE };
 
   State state;
 
