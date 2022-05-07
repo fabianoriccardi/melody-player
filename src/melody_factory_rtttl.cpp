@@ -90,8 +90,8 @@ const uint16_t sourceNotes[] = {
 };
 // clang-format on
 
-Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
-  File f = SPIFFS.open(filepath, "r");
+Melody MelodyFactoryClass::loadRtttlFile(String filepath, FS& fs) {
+  File f = fs.open(filepath, "r");
   f.setTimeout(0);
 
   if (!f) {

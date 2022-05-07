@@ -32,12 +32,12 @@ public:
   /**
    * Load the melody from file.
    */
-  Melody load(String filePath);
+  Melody load(String filePath, FS& fs = SPIFFS);
 
   /**
    * Load melody from RTTTL format from file.
    */
-  Melody loadRtttlFile(String filePath);
+  Melody loadRtttlFile(String filePath, FS& fs = SPIFFS);
 
   /**
    * Load melody from RTTTL format string.

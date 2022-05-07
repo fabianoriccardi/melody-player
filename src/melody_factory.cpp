@@ -24,8 +24,8 @@ static void removeCarriageReturn(String& s) {
   if (s.charAt(s.length() - 1) == '\r') { s = s.substring(0, s.length() - 1); }
 }
 
-Melody MelodyFactoryClass::load(String filepath) {
-  File f = SPIFFS.open(filepath, "r");
+Melody MelodyFactoryClass::load(String filepath, FS& fs) {
+  File f = fs.open(filepath, "r");
   f.setTimeout(0);
 
   if (!f) {
