@@ -1,12 +1,11 @@
 /**
- * Play 2 different melodies at the same time on 2 buzzers.
- * 
- * This works only with playAsync(), otherwise the melodies 
- * are played sequentially.
- * 
- * For more information about enabling multiple PWM output and
- * limitations of your board, check the wiki.
- * https://github.com/fabiuz7/melody-player-arduino/wiki
+ * Play multiple melodies at the same time on different buzzers.
+ *
+ * NOTE: This works only with playAsync().
+ *
+ * For more information on how to enable multiple PWM outputs and
+ * the limitations of your board, check the wiki.
+ * https://github.com/fabianoriccardi/melody-player/wiki
  */
 #include <melody_player.h>
 #include <melody_factory.h>
@@ -17,13 +16,16 @@ int buzzerPin2 = 5;
 MelodyPlayer player1(buzzerPin1);
 MelodyPlayer player2(buzzerPin2);
 
+bool end;
+
 void setup() {
   Serial.begin(115200);
-  while(!Serial);
+  while (!Serial)
+    ;
 
   Serial.println();
-  Serial.println("Melody Player - Play Melodies Simultaneouly");
-  
+  Serial.println("Melody Player - Play melodies simultaneouly");
+
   Serial.print("Loading melodies... ");
   String notes1[] = { "C4", "G3", "G3", "A3", "G3", "SILENCE", "B3", "C4" };
   Melody melody1 = MelodyFactory.load("Nice Melody", 250, notes1, 8);
@@ -31,11 +33,18 @@ void setup() {
   Melody melody2 = MelodyFactory.load("Raw frequencies", 400, notes2, 4);
   Serial.println("Done!");
 
-  Serial.print("Playing... ");
+  Serial.print("Start playing... ");
   player1.playAsync(melody1);
   player2.playAsync(melody2);
-
-  Serial.println("The end!");
+  end = false;
 }
 
-void loop() {}
+void loop() {
+  if (!player1.isPlaying() && !player2.isPlaying()) {
+    if (!end) {
+      end = true;
+      Serial.println("The end!");
+    }
+  }
+  delay(10);
+}

@@ -1,20 +1,17 @@
 /**
  * Melody Player library can load melodies from file.
- * On ESP8266/ESP32 there is an integrated flash memory (sometimes referred as SPIFFS),s
- * which can read and write files like a traditional file system.
- * 
- * Remember to upload the "data" folder on the MCU through ESPxx Sketch Data Upload plugin.
- * On ESP8266:
- * https://github.com/esp8266/arduino-esp8266fs-plugin
- * On ESP32:
- * https://github.com/me-no-dev/arduino-esp32fs-plugin
+ * On ESP8266 and ESP32 there is an embedded portion of flash memory to store files and folders. It
+ * uses a file system, usually LittleFS or SPIFFS. You can upload files through specific plugins.
+ * For more info, look at:
+ * - On ESP8266: https://github.com/esp8266/arduino-esp8266fs-plugin
+ * - On ESP32: https://github.com/me-no-dev/arduino-esp32fs-plugin
  */
 #include <melody_player.h>
 #include <melody_factory.h>
 
 int buzzerPin = 4;
 
-// This file do not exist
+// This file does not exist
 String missingMelodyFilePath = "missing.mel";
 String melodyFilePath = "/jingle.mel";
 
@@ -22,36 +19,38 @@ MelodyPlayer player(buzzerPin);
 
 void setup() {
   Serial.begin(115200);
-  while(!Serial);
+  while (!Serial)
+    ;
 
   Serial.println();
-  Serial.println("Melody Player - Load Melody from File");
-  
+  Serial.println("Melody Player - Load melody from file");
+
   // Remember to init the filesystem before loading a melody
   SPIFFS.begin();
 
-  Serial.println("Loading melody...");
+  Serial.println(String("Loading melody ") + missingMelodyFilePath + "...");
   Melody missingMelody = MelodyFactory.load(missingMelodyFilePath);
   // Check if the melody was successfully loaded
-  if(!missingMelody){
-    Serial.println(missingMelodyFilePath + " is really missing, trying to load another one....");
+  if (!missingMelody) {
+    Serial.println(missingMelodyFilePath + " not found, try to load another one...");
   }
 
-  // Load and play a correct melody
+  // Load and play an existing melody
+  Serial.println(String("Loading melody ") + melodyFilePath + "...");
   Melody melody = MelodyFactory.load(melodyFilePath);
-  if(melody){
+  if (melody) {
     Serial.println(melodyFilePath + " loaded!");
   } else {
     Serial.println("error");
-    while(1) delay(1000);
+    while (1) delay(1000);
   }
   Serial.println(String(" Title: ") + melody.getTitle());
   Serial.println(String(" Time unit: ") + melody.getTimeUnit() + " milliseconds");
   Serial.println(String(" Number of notes: ") + melody.getLength());
-  
-  Serial.print("Play in blocking mode...");
+
+  Serial.print("Start playing in blocking mode... ");
   player.play(melody);
-  Serial.println("The end!");
+  Serial.println("Melody ends!");
 }
 
 void loop() {}
