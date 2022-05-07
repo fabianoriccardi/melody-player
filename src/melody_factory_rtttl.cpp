@@ -95,7 +95,7 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath) {
   f.setTimeout(0);
 
   if (!f) {
-    Serial.println("Opening file error");
+    if (debug) Serial.println("Opening file error");
     return Melody();
   }
 
