@@ -180,7 +180,7 @@ bool MelodyFactoryClass::loadNote(String token) {
   if (debug) Serial.println(String("note+duration: ") + token);
 
   String aux;
-  int j = 0;
+  unsigned int j = 0;
 
   // Get the frequency
   while (j < token.length() && token.charAt(j) != ',') {
@@ -192,7 +192,7 @@ bool MelodyFactoryClass::loadNote(String token) {
     std::string mystr(aux.c_str());
     std::unordered_map<std::string, unsigned short>::const_iterator n = noteMapping.find(mystr);
     if (n != noteMapping.end()) {
-      note.frequency = noteMapping[mystr];
+      note.frequency = noteMapping.at(mystr);
     } else {
       if (debug) Serial.println(String("This note doesn't exist: ") + aux);
       return false;

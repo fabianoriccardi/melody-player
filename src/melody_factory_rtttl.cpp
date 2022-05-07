@@ -177,7 +177,7 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
  * Start from point to the next char to analyze.
  * Zero means error.
  */
-unsigned int getUnsignedInt(String& s, int& startFrom) {
+unsigned int getUnsignedInt(const String& s, int& startFrom) {
   unsigned int temp = 0;
   while (isDigit(s.charAt(startFrom))) {
     temp = (temp * 10) + s.charAt(startFrom) - '0';
@@ -186,7 +186,7 @@ unsigned int getUnsignedInt(String& s, int& startFrom) {
   return temp;
 }
 
-unsigned int MelodyFactoryClass::parseDuration(String& s, int& startFrom) {
+unsigned int MelodyFactoryClass::parseDuration(const String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
@@ -196,7 +196,7 @@ unsigned int MelodyFactoryClass::parseDuration(String& s, int& startFrom) {
   return temp;
 }
 
-unsigned int MelodyFactoryClass::parseOctave(String& s, int& startFrom) {
+unsigned int MelodyFactoryClass::parseOctave(const String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
@@ -206,7 +206,7 @@ unsigned int MelodyFactoryClass::parseOctave(String& s, int& startFrom) {
   return temp;
 }
 
-unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
+unsigned int MelodyFactoryClass::parseBeat(const String& s, int& startFrom) {
   // Skip '='
   startFrom++;
   unsigned int temp = getUnsignedInt(s, startFrom);
@@ -221,7 +221,7 @@ unsigned int MelodyFactoryClass::parseBeat(String& s, int& startFrom) {
   return temp;
 }
 
-bool MelodyFactoryClass::parseRtttlNote(String s) {
+bool MelodyFactoryClass::parseRtttlNote(const String& s) {
   int i = 0;
 
   unsigned short relativeDuration = this->duration;

@@ -108,10 +108,10 @@ private:
    */
   void parseDefaultValues(String values);
 
-  unsigned int parseDuration(String& s, int& startFrom);
-  unsigned int parseOctave(String& s, int& startFrom);
-  unsigned int parseBeat(String& s, int& startFrom);
-  bool parseRtttlNote(String s);
+  unsigned int parseDuration(const String& s, int& startFrom);
+  unsigned int parseOctave(const String& s, int& startFrom);
+  unsigned int parseBeat(const String& s, int& startFrom);
+  bool parseRtttlNote(const String& s);
 
   //////////// END RTTTL helpers
 
