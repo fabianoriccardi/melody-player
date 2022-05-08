@@ -47,7 +47,7 @@ void MelodyPlayer::play() {
       delay(0.3f * computedNote.duration);
     } else {
 #ifdef ESP32
-      ledcWriteTone(pwmChannel, note.frequency);
+      ledcWriteTone(pwmChannel, computedNote.frequency);
 #else
       tone(pin, computedNote.frequency);
 #endif
@@ -99,7 +99,7 @@ void changeTone(MelodyPlayer* player) {
 #endif
     } else {
 #ifdef ESP32
-      ledcWriteTone(player->pwmChannel, note.frequency);
+      ledcWriteTone(player->pwmChannel, computedNote.frequency);
 #else
       tone(player->pin, computedNote.frequency);
 #endif
