@@ -30,34 +30,34 @@
 class MelodyFactoryClass {
 public:
   /**
-   * Load the melody from file.
+   * Load the melody from file in MelodyPlayer format.
    */
   Melody load(String filePath, FS& fs = SPIFFS);
 
   /**
-   * Load melody from RTTTL format from file.
+   * Load melody from file in RTTTL format.
    */
   Melody loadRtttlFile(String filePath, FS& fs = SPIFFS);
 
   /**
-   * Load melody from RTTTL format string.
+   * Load melody from string in RTTTL format.
    */
   Melody loadRtttlString(const char rtttlMelody[]);
 
   /**
-   * Load the melody from code.
+   * Create a melody with the given parameters.
    * Notes are represented as string accordigly to english notation (i.e. "C4", "G3", "G6").
    * This method assumes that each note lasts 1 beat.
-   * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2
-   * consecutive notes.
+   * frequenciesToLoad are integer numbers expressing the real reproduced frequency.
+   * automaticSilence, if true, automatically inserts a small silence between 2 consecutive notes.
    */
   Melody load(String title, unsigned short timeUnit, String notesToLoad[],
               unsigned short nNotesToLoad, bool autoSilence = true);
 
   /**
-   * Load the melody from code.
-   * frequenciesToLoad are intenger numbers expressing the real reproduced frequency.
+   * Create a melody with the given parameters.
    * This method assumes that each note lasts 1 beat.
+   * frequenciesToLoad are integer numbers expressing the real reproduced frequency.
    * The last parameter, automaticSilence, if true, automatically inserts a small silence between 2
    * consecutive notes.
    */
@@ -71,7 +71,7 @@ private:
   unsigned short timeUnit;
   NoteFormat noteFormat;
   std::shared_ptr<std::vector<NoteDuration>> notes;
-  // Used to check how many note are stored in a file.
+  // Used to check how many notes are stored in a file.
   unsigned short nNotes;
   const unsigned short maxLength = 1000;
 
@@ -104,7 +104,8 @@ private:
 
   /**
    * Try to parse the default parameters of RTTTL melody.
-   * If not found, it sets the default values (defined by rtttl specification).
+   * If user-defined defaults are not found it sets the default values as prescribed by RTTTL
+   * specification.
    */
   void parseDefaultValues(String values);
 
@@ -116,39 +117,37 @@ private:
   //////////// END RTTTL helpers
 
   /**
-   * Get title from line.
+   * Parse the title from the given string.
    * Return true on success.
    */
   bool loadTitle(String line);
 
   /**
-   * Get time unit from line.
+   * Parse the time unit from the given string.
    * Return true on success.
    */
   bool loadTimeUnit(String line);
 
   /**
-   * Get number of notes.
+   * Parse the number of notes from the given string.
    * Return true on success.
    */
   bool loadNumberOfNotes(String line);
 
   /**
-   * Get how the note are represented in the file.
+   * Parse the note's format from the given string.
    */
   NoteFormat loadNoteFormat(String line);
 
   /**
-   * Parse a token that is a note and its duration.
+   * Parse a token (a note and its duration) from the given string.
    * The format of this token is:
    * <note> + ',' + <duration>.
-   * Return true if parsing succeed, false otherwise.
+   * Return true if the parsing succeeds, false otherwise.
    */
   bool loadNote(String token);
 
-  /**
-   * Set this value to true to enable debug messages over serial port.
-   */
+  // Enable debug messages over serial port
   static const bool debug = false;
 };
 

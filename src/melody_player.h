@@ -28,7 +28,7 @@ class MelodyPlayer {
 public:
 #ifdef ESP32
   /**
-   * pwmChannel is optional and you have to configure it only if you need to play
+   * pwmChannel is optional and you have to configure it only if you play will
    * simultaneous melodies.
    */
   MelodyPlayer(unsigned char pin, unsigned char pwmChannel = 0, bool offLevel = HIGH);
@@ -37,30 +37,31 @@ public:
 #endif
 
   /**
-   * Play the last melody played in a synchrounus (blocking) way.
+   * Play the last melody in a synchrounus (blocking) way.
+   * If the melody is not valid, this call has no effect.
    */
   void play();
 
   /**
-   * Play the melody in a synchronous (blocking) way.
+   * Play the given melody in a synchronous (blocking) way.
    * If the melody is not valid, this call has no effect.
    */
   void play(Melody& melody);
 
   /**
-   * Play the last melody in asynchronous way, this function return immediately.
+   * Play the last melody in asynchronous way (return immediately).
    * If the melody is not valid, this call has no effect.
    */
   void playAsync();
 
   /**
-   * Play the melody in asynchronous way, this function return immediately.
+   * Play the given melody in asynchronous way (return immediately).
    * If the melody is not valid, this call has no effect.
    */
   void playAsync(Melody& melody);
 
   /**
-   * Stop the melody.
+   * Stop the current melody.
    * Then, if you will call play() or playAsync(), the melody restarts from the begin.
    */
   void stop();
@@ -73,23 +74,25 @@ public:
   void pause();
 
   /**
-   * Tell if the melody is played.
+   * Tell if playing.
    */
   bool isPlaying() const {
     return state == State::PLAY;
   }
 
   /**
-   * The current melody and the source Player state is transferend to the destination Player.
-   * The source gets stopped. You have to call play(Melody) to make it play again.
+   * Move the current melody and player's state to the given destination Player.
+   * The source player stops and lose the reference to the actual melody. You have to call
+   * play(Melody) to make it play again.
    */
-  void transferMelodyTo(MelodyPlayer& destPlayer);
+  void transferMelodyTo(MelodyPlayer& destination);
 
   /**
-   * The current melody and source player state is cloned to the destiantion Player.
-   * The two players remains indipendent (e.g. the melody can be stop/pause/played indipendently).
+   * Duplicate the current melody and player's state to the given destination Player.
+   * Both players remains indipendent from each other (e.g. the melody can be independently
+   * stopped/paused/played).
    */
-  void duplicateMelodyTo(MelodyPlayer& destPlayer);
+  void duplicateMelodyTo(MelodyPlayer& destination);
 
 private:
   unsigned char pin;
@@ -99,13 +102,12 @@ private:
 #endif
 
   /**
-   * The voltage to really turn off the buzzer (no current consumption).
+   * The voltage to turn off the buzzer.
    *
-   * Passive buzzers have 2 states: the "natural" state (no power consumption)
-   * and the "non-natural" state (high power consumption).
-   * To emit sound, it oscillate between these 2 states. If it stops
-   * in the non-natural state, it doesn't emit sound but it still consume energy,
-   * so such state should be avoided to save energy.
+   * NOTE: Passive buzzers have 2 states: the "rest" state (no power consumption) and the "active"
+   * state (high power consumption). To emit sound, it have to oscillate between these 2 states. If
+   * it stops in the active state, it doesn't emit sound, but it continues to consume energy,
+   * heating the buzzer and possibly damaging itself.
    */
   bool offLevel;
 
@@ -127,9 +129,9 @@ private:
       return silence;
     }
 
-    /*
-     * Advance the index of one step if there isn't any partial note
-     * to be played. Call this before getting the note to play.
+    /**
+     * Advance the melody index by one step. If there is a pending partial note it hasn't any
+     * effect.
      */
     void advance() {
       if (first) {
@@ -151,7 +153,7 @@ private:
     }
 
     /**
-     * Reset the state of the melody (i.e. a melody just instatiated).
+     * Reset the state of the melody (i.e. a melody just loaded).
      */
     void reset() {
       first = true;
@@ -161,18 +163,18 @@ private:
     }
 
     /**
-     * Save the current state of the melody, including the time to finish
-     * the current note.
+     * Save the the time to finish the current note.
      */
     void saveRemainingDuration(unsigned long supportSemiNote) {
       partialNoteReproduction = supportSemiNote - millis();
-      // Threshold values, to avoid Ticker trigger too early
+      // Ignore partial reproduction if the current value is below the threshold. This is needed
+      // since Ticker may struggle with tight timings.
       if (partialNoteReproduction < 10) { partialNoteReproduction = 0; }
     }
 
     /**
-     * Call this melody to save that a partial note is reproduced
-     * (Necessary to call advance()).
+     * Clear the partial note duration. It should be called after reproduction of the partial note
+     * and it is propedeutic to advance() method.
      */
     void resetRemainingDuration() {
       partialNoteReproduction = 0;
@@ -183,7 +185,7 @@ private:
     }
 
     /**
-     * Get the current note, where the duration is the absolute time in milliseconds.
+     * Get the current note. The duration is absolute and expressed in milliseconds.
      */
     NoteDuration getCurrentComputedNote() const {
       NoteDuration note = melody.getNote(getIndex());
@@ -199,8 +201,8 @@ private:
     unsigned short index;
 
     /**
-     * Used to pause a melody, and exchange the State between Players.
-     * Values expressed in ms.
+     * Variable to support precise pauses and move/duplicate melodies between Players.
+     * Value are expressed in milliseconds.
      */
     unsigned short partialNoteReproduction;
   };
@@ -218,7 +220,7 @@ private:
   const static bool debug = false;
 
   /**
-   * Change the tone with to next note.
+   * Change the current note with next one.
    */
   friend void changeTone(MelodyPlayer* melody);
 
@@ -234,8 +236,7 @@ private:
   void turnOn();
 
   /**
-   * Disable PWM and put the buzzer is low power state.
-   *
+   * Disable PWM and put the buzzer is low-power state.
    * This calls will fails if PWM is not initialized!
    */
   void turnOff();

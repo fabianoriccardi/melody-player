@@ -26,18 +26,19 @@
 #include <vector>
 
 /**
- * A note and the relative duration.
+ * A note and its duration.
  */
 struct NoteDuration {
-  // the frequency of a note
+  // The note frequency.
   unsigned short frequency;
-  // duration of the frequency, expressed as number of "time unit"
+  // The note duration. The representation can be either relative (fixed-point, decimal
+  // part = 1 bit) to time units or absolute (in milliseconds)
   unsigned short duration;
 };
 
 /**
- * This class stores the data to play a melody.
- * To eases the creation of a melody, you may use MelodyFactory class.
+ * This class stores the data melody (notes and metadata).
+ * To ease the creation of a melody, you should use MelodyFactory class.
  */
 class Melody {
 public:
@@ -54,15 +55,14 @@ public:
   };
 
   /**
-   * Return the base time unit (i.e. the shortest possible
-   * note in this melody), expressed in millisecond.
+   * Return the time unit (i.e. the minimum length of a note), in milliseconds.
    */
   unsigned short getTimeUnit() const {
     return timeUnit;
   };
 
   /**
-   * Get number of notes.
+   * Get the number of notes.
    */
   unsigned short getLength() const {
     if (notes == nullptr) return 0;
@@ -78,19 +78,22 @@ public:
     return (*notes).back();
   };
 
+  /**
+   * Return true if the melody should be played with a small delay between each note.
+   */
   bool getAutomaticSilence() const {
     return automaticSilence;
   }
 
   /**
-   * Tell if the object contains a valid melody.
+   * Return true if the melody is valid, false otherwise.
    */
   bool isValid() const {
     return notes != nullptr && (*notes).size() != 0;
   }
 
   /**
-   * Return true if contains a valid melody, false otherwise.
+   * Return true if the melody is valid, false otherwise.
    */
   explicit operator bool() const {
     return isValid();
@@ -98,11 +101,13 @@ public:
 
 private:
   String title;
+  // in milliseconds
   unsigned short timeUnit;
   std::shared_ptr<std::vector<NoteDuration>> notes;
   const static unsigned short maxLength = 1000;
   bool automaticSilence;
 
+  // Enable debug messages over serial port
   const static bool debug = false;
 };
 

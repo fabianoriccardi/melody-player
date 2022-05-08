@@ -174,8 +174,8 @@ Melody MelodyFactoryClass::loadRtttlString(const char rtttlMelody[]) {
 }
 
 /**
- * Start from point to the next char to analyze.
- * Zero means error.
+ * Parse an unsigned integer starting from the given startFrom to the first non-digit char.
+ * Return zero if it cannot parse a number. *startFrom* will point to the first non-digit char.
  */
 unsigned int getUnsignedInt(const String& s, int& startFrom) {
   unsigned int temp = 0;
