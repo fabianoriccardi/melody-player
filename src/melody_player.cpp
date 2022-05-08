@@ -34,23 +34,24 @@ void MelodyPlayer::play() {
 
   melodyState->advance();
   while (melodyState->getIndex() + melodyState->isSilence() < melodyState->melody.getLength()) {
-    NoteDuration note(melodyState->melody.getNote(melodyState->getIndex()));
+    NoteDuration computedNote = melodyState->getCurrentComputedNote();
     if (debug)
-      Serial.println(String("Playing: frequency:") + note.frequency + " duration:" + note.duration);
+      Serial.println(String("Playing: frequency:") + computedNote.frequency
+                     + " duration:" + computedNote.duration);
     if (melodyState->isSilence()) {
 #ifdef ESP32
       ledcWriteTone(pwmChannel, 0);
 #else
       noTone(pin);
 #endif
-      delay(0.3f * melodyState->melody.getTimeUnit() * note.duration);
+      delay(0.3f * computedNote.duration);
     } else {
 #ifdef ESP32
       ledcWriteTone(pwmChannel, note.frequency);
 #else
-      tone(pin, note.frequency);
+      tone(pin, computedNote.frequency);
 #endif
-      delay(melodyState->melody.getTimeUnit() * note.duration);
+      delay(computedNote.duration);
     }
     melodyState->advance();
   }
@@ -68,21 +69,20 @@ void changeTone(MelodyPlayer* player) {
   player->melodyState->advance();
   if (player->melodyState->getIndex() + player->melodyState->isSilence()
       < player->melodyState->melody.getLength()) {
-    NoteDuration note(player->melodyState->melody.getNote(player->melodyState->getIndex()));
-    int noteDur = player->melodyState->melody.getTimeUnit() * note.duration;
+    NoteDuration computedNote(player->melodyState->getCurrentComputedNote());
 
     float duration = player->melodyState->getRemainingDuration();
     if (duration > 0) {
       player->melodyState->resetRemainingDuration();
     } else {
       if (player->melodyState->isSilence()) {
-        duration = 0.3f * noteDur;
+        duration = 0.3f * computedNote.duration;
       } else {
-        duration = 1.0f * noteDur;
+        duration = computedNote.duration;
       }
     }
     if (player->debug)
-      Serial.println(String("Playing async: freq=") + note.frequency + " dur=" + duration
+      Serial.println(String("Playing async: freq=") + computedNote.frequency + " dur=" + duration
                      + " iteration=" + player->melodyState->getIndex());
 
     if (player->melodyState->isSilence()) {
@@ -101,7 +101,7 @@ void changeTone(MelodyPlayer* player) {
 #ifdef ESP32
       ledcWriteTone(player->pwmChannel, note.frequency);
 #else
-      tone(player->pin, note.frequency);
+      tone(player->pin, computedNote.frequency);
 #endif
 
 #ifdef ESP32

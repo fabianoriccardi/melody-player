@@ -182,6 +182,15 @@ private:
       return partialNoteReproduction;
     }
 
+    /**
+     * Get the current note, where the duration is the absolute time in milliseconds.
+     */
+    NoteDuration getCurrentComputedNote() const {
+      NoteDuration note = melody.getNote(getIndex());
+      note.duration = melody.getTimeUnit() * note.duration;
+      return note;
+    }
+
   private:
     bool first;
     bool silence;
