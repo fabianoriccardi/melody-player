@@ -211,7 +211,10 @@ bool MelodyFactoryClass::loadNote(String token) {
   }
 
   note.duration = aux.toInt();
+
   if (debug) Serial.println(String("duration: ") + note.duration);
+  // The representation of relative note duration is fixed-point with decimal part length = 1bit
+  note.duration *= 2;
 
   notes->push_back(note);
 

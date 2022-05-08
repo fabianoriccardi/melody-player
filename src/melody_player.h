@@ -188,6 +188,8 @@ private:
     NoteDuration getCurrentComputedNote() const {
       NoteDuration note = melody.getNote(getIndex());
       note.duration = melody.getTimeUnit() * note.duration;
+      // because the fixed point notation
+      note.duration /= 2;
       return note;
     }
 

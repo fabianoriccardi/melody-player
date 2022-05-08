@@ -272,6 +272,8 @@ bool MelodyFactoryClass::parseRtttlNote(const String& s) {
     i++;
   }
 
+  // The representation of relative note duration is fixed-point with decimal part length = 1bit
+  relativeDuration *= 2;
   // get optional '.' dotted note
   // This note will last 50% more
   if (s.charAt(i) == '.') {
