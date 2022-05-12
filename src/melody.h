@@ -70,13 +70,13 @@ public:
   }
 
   /**
-   * Get a note at a given position.
-   * Check length or validity of melody before call this method.
+   * Get the note at the given position.
+   * If the melody or the position is invalid, return a zeroed NoteDuration.
    */
   NoteDuration getNote(unsigned short i) const {
-    if (i < (*notes).size()) { return (*notes)[i]; }
-    return (*notes).back();
-  };
+    if (i < getLength()) { return (*notes)[i]; }
+    return { 0, 0 };
+  }
 
   /**
    * Return true if the melody should be played with a small delay between each note.
