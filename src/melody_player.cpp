@@ -71,9 +71,9 @@ void changeTone(MelodyPlayer* player) {
       < player->melodyState->melody.getLength()) {
     NoteDuration computedNote(player->melodyState->getCurrentComputedNote());
 
-    float duration = player->melodyState->getRemainingDuration();
+    float duration = player->melodyState->getRemainingNoteDuration();
     if (duration > 0) {
-      player->melodyState->resetRemainingDuration();
+      player->melodyState->resetRemainingNoteDuration();
     } else {
       if (player->melodyState->isSilence()) {
         duration = 0.3f * computedNote.duration;
@@ -149,7 +149,7 @@ void MelodyPlayer::pause() {
 
   haltPlay();
   state = State::PAUSE;
-  melodyState->saveRemainingDuration(supportSemiNote);
+  melodyState->saveRemainingNoteDuration(supportSemiNote);
 }
 
 void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer) {
@@ -161,7 +161,7 @@ void MelodyPlayer::transferMelodyTo(MelodyPlayer& destPlayer) {
 
   haltPlay();
   state = State::STOP;
-  melodyState->saveRemainingDuration(supportSemiNote);
+  melodyState->saveRemainingNoteDuration(supportSemiNote);
   destPlayer.melodyState = std::move(melodyState);
 
   if (playing) {
@@ -176,7 +176,7 @@ void MelodyPlayer::duplicateMelodyTo(MelodyPlayer& destPlayer) {
 
   destPlayer.stop();
   destPlayer.melodyState = make_unique<MelodyState>(*(this->melodyState));
-  destPlayer.melodyState->saveRemainingDuration(supportSemiNote);
+  destPlayer.melodyState->saveRemainingNoteDuration(supportSemiNote);
 
   if (isPlaying()) {
     destPlayer.playAsync();
@@ -220,8 +220,8 @@ void MelodyPlayer::turnOff() {
   ledcWrite(pwmChannel, 0);
   ledcDetachPin(pin);
 #else
-  // Remember that this will set LOW output,
-  // it doesn't mean that buzzer is off.
+  // Remember that this will set LOW output, it doesn't mean that buzzer is off (look at offLevel
+  // for more info).
   noTone(pin);
 #endif
 

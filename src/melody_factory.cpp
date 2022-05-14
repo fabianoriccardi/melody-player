@@ -61,7 +61,7 @@ Melody MelodyFactoryClass::load(String filepath, FS& fs) {
     notes->reserve(nNotes);
     bool error = false;
     while (f.available() && notes->size() < nNotes && !error) {
-      // let's try to read a token
+      // get a token
       String noteDuration = f.readStringUntil('|');
       error = !loadNote(noteDuration);
     }

@@ -77,7 +77,7 @@ private:
 
   ///////////// RTTTL helpers
   /**
-   * It is the default duration of a note. For example,
+   * The default duration of a note. For example,
    * "4" means that each note with no duration specifier
    * is by default considered a quarter note. Possibile values:
    * 1 - whole note
@@ -97,7 +97,8 @@ private:
   unsigned short octave;
 
   /**
-   * Beats per minute (BPM).
+   * The default BPM (beats per minute) value. BPM is arbitrarily limited between 10 and 300. Look
+   * at the implementation of parseBeat for more info.
    */
   const unsigned short defaultBeat = 63;
   unsigned short beat;

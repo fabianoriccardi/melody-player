@@ -82,8 +82,8 @@ public:
 
   /**
    * Move the current melody and player's state to the given destination Player.
-   * The source player stops and lose the reference to the actual melody. You have to call
-   * play(Melody) to make it play again.
+   * The source player stops and lose the reference to the actual melody (i.e. you have to call
+   * play(Melody) to make the source player play again).
    */
   void transferMelodyTo(MelodyPlayer& destination);
 
@@ -112,13 +112,13 @@ private:
   bool offLevel;
 
   /**
-   * Store the current state of a Melody.
+   * Store the playback state of a melody and provide the methods to control it.
    */
   class MelodyState {
   public:
-    MelodyState() : first(true), index(0), partialNoteReproduction(0){};
+    MelodyState() : first(true), index(0), remainingNoteTime(0){};
     MelodyState(const Melody& melody)
-      : melody(melody), first(true), silence(false), index(0), partialNoteReproduction(0){};
+      : melody(melody), first(true), silence(false), index(0), remainingNoteTime(0){};
     Melody melody;
 
     unsigned short getIndex() const {
@@ -138,7 +138,7 @@ private:
         first = false;
         return;
       }
-      if (partialNoteReproduction != 0) { return; }
+      if (remainingNoteTime != 0) { return; }
 
       if (melody.getAutomaticSilence()) {
         if (silence) {
@@ -158,30 +158,33 @@ private:
     void reset() {
       first = true;
       index = 0;
-      partialNoteReproduction = 0;
+      remainingNoteTime = 0;
       silence = false;
     }
 
     /**
-     * Save the the time to finish the current note.
+     * Save the time to finish the current note.
      */
-    void saveRemainingDuration(unsigned long supportSemiNote) {
-      partialNoteReproduction = supportSemiNote - millis();
+    void saveRemainingNoteDuration(unsigned long supportSemiNote) {
+      remainingNoteTime = supportSemiNote - millis();
       // Ignore partial reproduction if the current value is below the threshold. This is needed
       // since Ticker may struggle with tight timings.
-      if (partialNoteReproduction < 10) { partialNoteReproduction = 0; }
+      if (remainingNoteTime < 10) { remainingNoteTime = 0; }
     }
 
     /**
      * Clear the partial note duration. It should be called after reproduction of the partial note
      * and it is propedeutic to advance() method.
      */
-    void resetRemainingDuration() {
-      partialNoteReproduction = 0;
+    void resetRemainingNoteDuration() {
+      remainingNoteTime = 0;
     }
 
-    unsigned short getRemainingDuration() const {
-      return partialNoteReproduction;
+    /**
+     * Get the remaining duration of the latest "saved" note.
+     */
+    unsigned short getRemainingNoteDuration() const {
+      return remainingNoteTime;
     }
 
     /**
@@ -204,7 +207,7 @@ private:
      * Variable to support precise pauses and move/duplicate melodies between Players.
      * Value are expressed in milliseconds.
      */
-    unsigned short partialNoteReproduction;
+    unsigned short remainingNoteTime;
   };
 
   enum class State { STOP, PLAY, PAUSE };
@@ -220,13 +223,13 @@ private:
   const static bool debug = false;
 
   /**
-   * Change the current note with next one.
+   * Change the current note with the next one.
    */
   friend void changeTone(MelodyPlayer* melody);
 
   /**
    * Halt the advancement of the melody reproduction.
-   * This is the common method for pause and stop.
+   * This is the shared method for pause and stop.
    */
   void haltPlay();
 

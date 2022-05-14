@@ -28,9 +28,7 @@
 #include <string>
 
 /**
- * NOTE: Use carefully with Arduino: this map is quite large
- * (could be around 1Kbyte), so if you're running low of RAM,
- * switch to the original pitches.h file (based on #define)
+ * NOTE: this map is the Achille's heel of this library: it takes about 1Kbyte.
  */
 extern const std::unordered_map<std::string, unsigned short> noteMapping;
 

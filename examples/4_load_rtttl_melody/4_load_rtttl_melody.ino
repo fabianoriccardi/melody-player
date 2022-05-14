@@ -1,5 +1,5 @@
 /**
- * Load an RTTTL melody from hardcoded literal string and from file.
+ * Load and play an RTTTL melody from hardcoded literal string and from file.
  */
 #include <melody_player.h>
 #include <melody_factory.h>
@@ -23,11 +23,11 @@ void setup() {
   Serial.println("Melody Player - Load RTTTL melody");
 
   Serial.print("Loading hardcoded melody... ");
-  Melody melody2 = MelodyFactory.loadRtttlString(melodyString);
-  if (melody2) {
+  Melody melody = MelodyFactory.loadRtttlString(melodyString);
+  if (melody) {
     Serial.println("Done!");
     Serial.print("Playing... ");
-    player.play(melody2);
+    player.play(melody);
     Serial.println("Done!");
   } else {
     Serial.println("Error");
@@ -40,7 +40,7 @@ void setup() {
   SPIFFS.begin();
 
   Serial.print("Loading melody from file... ");
-  Melody melody = MelodyFactory.loadRtttlFile(melodyFilePath);
+  melody = MelodyFactory.loadRtttlFile(melodyFilePath);
   if (!melody) {
     Serial.println("Error");
   } else {
