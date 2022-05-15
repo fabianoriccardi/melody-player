@@ -24,7 +24,12 @@ int buzzerPin1 = 4;
 int buzzerPin2 = 5;
 
 MelodyPlayer player1(buzzerPin1);
+
+#ifdef ESP32
+MelodyPlayer player2(buzzerPin2, 2);
+#else
 MelodyPlayer player2(buzzerPin2);
+#endif
 
 unsigned long start = 0;
 bool transfered = false;

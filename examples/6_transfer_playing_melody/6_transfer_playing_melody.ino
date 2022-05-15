@@ -22,7 +22,12 @@ int buzzerPin1 = 4;
 int buzzerPin2 = 5;
 
 MelodyPlayer player1(buzzerPin1);
+
+#ifdef ESP32
+MelodyPlayer player2(buzzerPin2, 2);
+#else
 MelodyPlayer player2(buzzerPin2);
+#endif
 
 unsigned long start = 0;
 bool transfered = false;
@@ -57,7 +62,7 @@ void setup() {
 void loop() {
   if (millis() - start > 2000 && !transfered) {
     transfered = true;
-    Serial.println("Continuing the melody playback on a different buzzer...");
+    Serial.println("Continuing the melody playback on the second buzzer...");
     player1.transferMelodyTo(player2);
   }
 
