@@ -52,7 +52,7 @@ void setup() {
 void loop() {
   if (millis() - start > 2000 && !transfered) {
     transfered = true;
-    Serial.println("Continuing the melody on a different buzzer...");
+    Serial.println("Continuing the melody playback on both buzzers...");
     player1.duplicateMelodyTo(player2);
   }
 

@@ -1,8 +1,10 @@
 /**
  * Melody Player library can load melodies from file.
- * On ESP8266 and ESP32 there is an embedded portion of flash memory to store files and folders. It
- * uses a file system, usually LittleFS or SPIFFS. You can upload files through specific plugins.
- * For more info, look at:
+ *
+ * REMEMBER to upload the file system containing the files in the "data" directory before running
+ * this sketch. On ESP8266 and ESP32 there is an embedded portion of flash memory to store files and
+ * folders organized with a file system, usually LittleFS or SPIFFS. You can upload files through
+ * specific plugins. For more info, look at:
  * - On ESP8266: https://github.com/esp8266/arduino-esp8266fs-plugin
  * - On ESP32: https://github.com/me-no-dev/arduino-esp32fs-plugin
  */
@@ -12,7 +14,7 @@
 int buzzerPin = 4;
 
 // This file does not exist
-String missingMelodyFilePath = "missing.mel";
+String missingMelodyFilePath = "/missing.mel";
 String melodyFilePath = "/jingle.mel";
 
 MelodyPlayer player(buzzerPin);

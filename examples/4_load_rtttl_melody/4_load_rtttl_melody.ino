@@ -1,5 +1,7 @@
 /**
  * Load and play an RTTTL melody from hardcoded literal string and from file.
+ *
+ * REMEMBER to upload the file system containing the files in the "data" directory.
  */
 #include <melody_player.h>
 #include <melody_factory.h>

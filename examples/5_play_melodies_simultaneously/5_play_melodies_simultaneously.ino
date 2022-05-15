@@ -1,11 +1,9 @@
 /**
  * Play multiple melodies at the same time on different buzzers.
  *
- * NOTE: This works only with playAsync().
- *
- * For more information on how to enable multiple PWM outputs and
- * the limitations of your board, check the wiki.
- * https://github.com/fabianoriccardi/melody-player/wiki
+ * NOTE: To use this sketch on ESP32 you need to specify the LEDC channel in MelodyPlayer
+ * constructor. For more information visit the wiki:
+ * https://github.com/fabianoriccardi/melody-player/wiki/Limitations-of-multi-buzzer-configuration
  */
 #include <melody_player.h>
 #include <melody_factory.h>
@@ -14,7 +12,12 @@ int buzzerPin1 = 4;
 int buzzerPin2 = 5;
 
 MelodyPlayer player1(buzzerPin1);
+
+#ifdef ESP32
+MelodyPlayer player2(buzzerPin2, 2);
+#else
 MelodyPlayer player2(buzzerPin2);
+#endif
 
 bool end;
 
