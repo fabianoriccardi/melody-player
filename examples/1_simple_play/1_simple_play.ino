@@ -19,7 +19,7 @@ void setup() {
     ;
 
   Serial.println();
-  Serial.println("Melody Player - Simple play (blocking vs non-blocking play");
+  Serial.println("Melody Player - Simple play (blocking vs non-blocking play)");
 
   Serial.println("Loading melody...");
   const int nNotes = 8;
