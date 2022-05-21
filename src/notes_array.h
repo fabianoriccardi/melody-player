@@ -17,10 +17,38 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this library; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
-#include "pitches_unordered_map.h"
+#ifndef PITCHES_UNORDERED_MAP_H
+#define PITCHES_UNORDERED_MAP_H
 
-// Notes are expressed in English convention
-const std::unordered_map<std::string, unsigned short> noteMapping{
+#include <array>
+
+/**
+ * This class resembles the std::string_view class introduced with c++17. MelodyPlayer uses this
+ * version to ensure retro-compatibility with esp8266-core v2.x.x, which uses GCC v4.8.2.
+ */
+struct StringView {
+  StringView() = delete;
+  constexpr StringView(const char* s) : str(s), lenght(__builtin_strlen(s)) {}
+
+  constexpr bool operator==(const StringView& other) const {
+    return lenght == other.lenght && (__builtin_memcmp(str, other.str, lenght) == 0);
+  }
+
+  constexpr size_t length() const {
+    return lenght;
+  }
+
+  constexpr const char* data() const {
+    return str;
+  }
+
+private:
+  const char* str;
+  size_t lenght;
+};
+
+// clang-format off
+constexpr std::array<std::pair<StringView, unsigned short>, 92> noteMapping{{
   {"SILENCE", 0   },
   { "B0",     31  },
   { "C1",     33  },
@@ -113,4 +141,7 @@ const std::unordered_map<std::string, unsigned short> noteMapping{
   { "CS8",    4435},
   { "D8",     4699},
   { "DS8",    4978}
-};
+}};
+// clang-format on
+
+#endif  // END PITCHES_UNORDERED_MAP_H

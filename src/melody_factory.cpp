@@ -18,7 +18,9 @@
  *   along with this library; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 #include "melody_factory.h"
-#include "pitches_unordered_map.h"
+#include "notes_array.h"
+
+#include <algorithm>
 
 static void removeCarriageReturn(String& s) {
   if (s.charAt(s.length() - 1) == '\r') { s = s.substring(0, s.length() - 1); }
@@ -189,10 +191,13 @@ bool MelodyFactoryClass::loadNote(String token) {
   }
 
   if (noteFormat == NoteFormat::STRING) {
-    std::string mystr(aux.c_str());
-    std::unordered_map<std::string, unsigned short>::const_iterator n = noteMapping.find(mystr);
-    if (n != noteMapping.end()) {
-      note.frequency = noteMapping.at(mystr);
+    auto n = std::find_if(noteMapping.cbegin(), noteMapping.cend(),
+                          [&aux](std::pair<StringView, unsigned short> e) {
+                            return e.first == aux.c_str();
+                          });
+
+    if (n != noteMapping.cend()) {
+      note.frequency = n->second;
     } else {
       if (debug) Serial.println(String("This note doesn't exist: ") + aux);
       return false;
