@@ -90,7 +90,7 @@ const uint16_t sourceNotes[] = {
 };
 // clang-format on
 
-Melody MelodyFactoryClass::loadRtttlFile(String filepath, FS& fs) {
+Melody MelodyFactoryClass::loadRtttlFile(String filepath, String title, FS& fs) {
   File f = fs.open(filepath, "r");
   f.setTimeout(0);
 
@@ -99,7 +99,18 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath, FS& fs) {
     return Melody();
   }
 
-  String title = f.readStringUntil(':');
+  if (title.length() == 0) {
+    if (debug) Serial.println("No title parameter was passed, operating in single-line mode");
+    title = f.readStringUntil(':');
+  } else {
+    if (debug) Serial.println("Title paramter was passed, operating in multi-line mode");
+    if (!f.find(title.c_str())) {
+      if (debug) Serial.println("Unable to find melody with title: " + String(title));
+      return Melody();
+    }
+    f.readStringUntil(':');
+  }
+
   title.trim();
   if (debug) Serial.println(String("Title:") + title);
   if (title.length() == 0) { return Melody(); }
@@ -114,11 +125,28 @@ Melody MelodyFactoryClass::loadRtttlFile(String filepath, FS& fs) {
   // 32 because it is the shortest note!
   int timeUnit = 60 * 1000 * 4 / beat / 32;
 
+  unsigned long position = f.position();
+  unsigned long bytesUntilNewLine = f.readStringUntil('\n').length();
+  f.seek(position);
+
   notes = std::make_shared<std::vector<NoteDuration>>();
   bool result = true;
-  while (f.available() && notes->size() < maxLength && result) {
+  bool lastNoteBeforeNewLine = false;
+  while ((f.available()) && (notes->size() < maxLength) && (result) && (!lastNoteBeforeNewLine)) {
     String s = f.readStringUntil(',');
+
+    if (s.length() > bytesUntilNewLine) {
+      lastNoteBeforeNewLine = true;
+      f.seek(position);
+      s = f.readStringUntil('\n');
+    }
     s.trim();
+
+    position = f.position();
+    bytesUntilNewLine = f.readStringUntil('\n').length();
+    f.seek(position);
+
+    if (debug) Serial.println(String("Found note:") + s);
     result = parseRtttlNote(s);
   }
   if (result && notes->size() > 0) { return Melody(title, timeUnit, notes, false); }

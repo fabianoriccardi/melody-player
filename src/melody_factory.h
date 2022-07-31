@@ -37,7 +37,7 @@ public:
   /**
    * Load melody from file in RTTTL format.
    */
-  Melody loadRtttlFile(String filePath, FS& fs = SPIFFS);
+  Melody loadRtttlFile(String filepath, String title = "", FS& fs = SPIFFS);
 
   /**
    * Load melody from string in RTTTL format.
@@ -149,7 +149,7 @@ private:
   bool loadNote(String token);
 
   // Enable debug messages over serial port
-  static const bool debug = false;
+  static const bool debug = true;
 };
 
 extern MelodyFactoryClass MelodyFactory;
