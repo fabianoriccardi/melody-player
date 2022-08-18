@@ -1,6 +1,6 @@
-# Melody Player for ESP
+# Melody Player
 
-[![arduino-library-badge](https://www.ardu-badge.com/badge/Melody%20Player.svg)](https://www.ardu-badge.com/badge/Melody%20Player.svg) ![Compile Library Examples](https://github.com/fabiuz7/melody-player-arduino/actions/workflows/LibraryBuild.yml/badge.svg)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/Melody%20Player.svg)](https://www.ardu-badge.com/badge/Melody%20Player.svg) ![Compile Library Examples](https://github.com/fabianoriccardi/melody-player/actions/workflows/LibraryBuild.yml/badge.svg)
 
 Melody Player is an Arduino library to play melodies on buzzers on ESP8266 and ESP32 in a non-blocking manner. Melodies can be written directly in code or loaded from file. It supports Ring Tone Text Transfer Language (RTTTL) format and a custom format developed specifically to enjoy all the benefits of this library.
 
@@ -100,4 +100,5 @@ Example 2: the same melody using the "integer" codification:
 
 ## Useful links
 
+* <https://panuworld.net/nuukiaworld/download/nokix/rtttl.htm>: RTTTL specification
 * <https://adamonsoon.github.io/rtttl-play/>: Test and listen RTTTL melodies
