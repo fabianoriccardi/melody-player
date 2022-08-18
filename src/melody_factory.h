@@ -35,9 +35,15 @@ public:
   Melody load(String filePath, FS& fs = SPIFFS);
 
   /**
-   * Load melody from file in RTTTL format.
+   * Load melody from file in RTTTL format. The file must contain only one melody.
    */
-  Melody loadRtttlFile(String filepath, String title = "", FS& fs = SPIFFS);
+  Melody loadRtttlFile(String filePath, FS& fs = SPIFFS);
+
+  /**
+   * Load melody with the given title from a file containing multiple RTTTL melody (one Melody per
+   * line).
+   */
+  Melody loadRtttlDB(String filepath, String title, FS& fs = SPIFFS);
 
   /**
    * Load melody from string in RTTTL format.
@@ -149,7 +155,7 @@ private:
   bool loadNote(String token);
 
   // Enable debug messages over serial port
-  static const bool debug = true;
+  static const bool debug = false;
 };
 
 extern MelodyFactoryClass MelodyFactory;
