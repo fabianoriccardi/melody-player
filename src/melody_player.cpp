@@ -119,6 +119,10 @@ void changeTone(MelodyPlayer* player) {
     { // Loop mode => start over
       player->playAsync();
     }
+    else if(player->stopCallback != NULL)
+    {
+      player->stopCallback();
+    }
   }
 }
 
@@ -136,10 +140,11 @@ void MelodyPlayer::playAsync() {
 #endif
 }
 
-void MelodyPlayer::playAsync(Melody& melody, bool loopMelody) {
+void MelodyPlayer::playAsync(Melody& melody, bool loopMelody, void(*callback)(void)) {
   if (!melody) { return; }
   melodyState = make_unique<MelodyState>(melody);
   loop = loopMelody;
+  stopCallback = callback;
   playAsync();
 }
 
