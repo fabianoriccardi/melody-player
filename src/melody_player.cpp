@@ -100,6 +100,7 @@ void changeTone(MelodyPlayer* player) {
     } else {
 #ifdef ESP32
       ledcWriteTone(player->pwmChannel, computedNote.frequency);
+      ledcWrite(player->pwmChannel,player->volume);
 #else
       tone(player->pin, computedNote.frequency);
 #endif
@@ -216,7 +217,7 @@ void MelodyPlayer::turnOn() {
 }
 
 void MelodyPlayer::setVolume(byte newVolume) {
-  volume = newVolume;
+  volume = newVolume/2;
 #ifdef ESP32
   if(state == State::PLAY)
   {
