@@ -81,6 +81,19 @@ public:
   }
 
   /**
+   * Change the tempo of the current melody to the proided value
+  */
+ void changeTempo(int newTempo);
+
+ /**
+  * Set the volume (0-255 value) of the player (only works on ESP32 platform)
+  * The volume is changed by adjusting the duty-cycle of the pwm signal sent to the piezo
+  * A value of 0 will produce no sound while a value of 255 will set the duty cycle to 50%,
+  * wich will produce the highest possible volume for the piezo.
+ */
+void setVolume(byte volume);
+
+  /**
    * Move the current melody and player's state to the given destination Player.
    * The source player stops and lose the reference to the actual melody (i.e. you have to call
    * play(Melody) to make the source player play again).
@@ -96,6 +109,7 @@ public:
 
 private:
   unsigned char pin;
+  byte volume = 125;
 
 #ifdef ESP32
   unsigned char pwmChannel;

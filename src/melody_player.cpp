@@ -211,7 +211,17 @@ void MelodyPlayer::turnOn() {
   // 2000 is a frequency, it will be changed at the first play
   ledcSetup(pwmChannel, 2000, resolution);
   ledcAttachPin(pin, pwmChannel);
-  ledcWrite(pwmChannel, 125);
+  ledcWrite(pwmChannel, volume);
+#endif
+}
+
+void MelodyPlayer::setVolume(byte newVolume) {
+  volume = newVolume;
+#ifdef ESP32
+  if(state == State::PLAY)
+  {
+    ledcWrite(pwmChannel, volume);
+  }
 #endif
 }
 
