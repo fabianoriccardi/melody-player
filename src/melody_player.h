@@ -76,6 +76,17 @@ public:
   void pause();
 
   /**
+   * Mute the sound of the current melody without stoppig it
+   * When unmute will be called the melody be resumed
+  */
+  void mute();
+
+  /**
+   * Unmute the current melody
+  */
+  void unmute();
+
+  /**
    * Tell if playing.
    */
   bool isPlaying() const {
@@ -84,16 +95,16 @@ public:
 
   /**
    * Change the tempo of the current melody to the proided value
-  */
- void changeTempo(int newTempo);
+   */
+  void changeTempo(int newTempo);
 
- /**
-  * Set the volume (0-255 value) of the player (only works on ESP32 platform)
-  * The volume is changed by adjusting the duty-cycle of the pwm signal sent to the piezo
-  * A value of 0 will produce no sound while a value of 255 will set the duty cycle to 50%,
-  * wich will produce the highest possible volume for the piezo.
- */
-void setVolume(byte volume);
+  /**
+   * Set the volume (0-255 value) of the player (only works on ESP32 platform)
+   * The volume is changed by adjusting the duty-cycle of the pwm signal sent to the piezo
+   * A value of 0 will produce no sound while a value of 255 will set the duty cycle to 50%,
+   * wich will produce the highest possible volume for the piezo.
+   */
+  void setVolume(byte volume);
 
   /**
    * Move the current melody and player's state to the given destination Player.
@@ -113,6 +124,7 @@ private:
   unsigned char pin;
   byte volume = 125;
   bool loop = false;
+  bool muted = false;
   void (*stopCallback)(void) = NULL;
 
 #ifdef ESP32

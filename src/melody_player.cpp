@@ -86,11 +86,14 @@ void changeTone(MelodyPlayer* player) {
                      + " iteration=" + player->melodyState->getIndex());
 
     if (player->melodyState->isSilence()) {
+      if(!player->muted)
+      {
 #ifdef ESP32
-      ledcWriteTone(player->pwmChannel, 0);
+        ledcWriteTone(player->pwmChannel, 0);
 #else
-      tone(player->pin, 0);
+        tone(player->pin, 0);
 #endif
+      }
 
 #ifdef ESP32
       player->ticker.once_ms(duration, changeTone, player);
@@ -98,12 +101,15 @@ void changeTone(MelodyPlayer* player) {
       player->ticker.once_ms_scheduled(duration, std::bind(changeTone, player));
 #endif
     } else {
+      if(!player->muted)
+      {
 #ifdef ESP32
-      ledcWriteTone(player->pwmChannel, computedNote.frequency);
-      ledcWrite(player->pwmChannel,player->volume);
+        ledcWriteTone(player->pwmChannel, computedNote.frequency);
+        ledcWrite(player->pwmChannel,player->volume);
 #else
-      tone(player->pin, computedNote.frequency);
+        tone(player->pin, computedNote.frequency);
 #endif
+      }
 
 #ifdef ESP32
       player->ticker.once_ms(duration, changeTone, player);
@@ -249,4 +255,15 @@ void MelodyPlayer::turnOff() {
 
   pinMode(pin, OUTPUT);
   digitalWrite(pin, offLevel);
+}
+
+void MelodyPlayer::mute() {
+  muted = true;
+}
+
+void MelodyPlayer::unmute() {
+#ifdef ESP32
+  ledcAttachPin(pin, pwmChannel);
+#endif
+  muted = false;
 }
