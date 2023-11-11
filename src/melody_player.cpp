@@ -113,7 +113,12 @@ void changeTone(MelodyPlayer* player) {
     }
     player->supportSemiNote = millis() + duration;
   } else {
+    // End of the melody
     player->stop();
+    if(player->loop)
+    { // Loop mode => start over
+      player->playAsync();
+    }
   }
 }
 
@@ -131,9 +136,10 @@ void MelodyPlayer::playAsync() {
 #endif
 }
 
-void MelodyPlayer::playAsync(Melody& melody) {
+void MelodyPlayer::playAsync(Melody& melody, bool loopMelody) {
   if (!melody) { return; }
   melodyState = make_unique<MelodyState>(melody);
+  loop = loopMelody;
   playAsync();
 }
 

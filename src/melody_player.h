@@ -57,8 +57,9 @@ public:
   /**
    * Play the given melody in asynchronous way (return immediately).
    * If the melody is not valid, this call has no effect.
+   * Set loop to true if you want the melody to start over after at the end.
    */
-  void playAsync(Melody& melody);
+  void playAsync(Melody& melody, bool loop = false);
 
   /**
    * Stop the current melody.
@@ -110,6 +111,7 @@ void setVolume(byte volume);
 private:
   unsigned char pin;
   byte volume = 125;
+  bool loop = false;
 
 #ifdef ESP32
   unsigned char pwmChannel;
