@@ -267,3 +267,8 @@ void MelodyPlayer::unmute() {
 #endif
   muted = false;
 }
+
+void MelodyPlayer::changeTempo(int newTempo) {
+  if (melodyState == nullptr) { return; }
+  melodyState->changeTempo(newTempo);
+}

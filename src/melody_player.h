@@ -146,9 +146,9 @@ private:
    */
   class MelodyState {
   public:
-    MelodyState() : first(true), index(0), remainingNoteTime(0){};
+    MelodyState() : first(true), index(0), remainingNoteTime(0), timeUnit(0) {};
     MelodyState(const Melody& melody)
-      : melody(melody), first(true), silence(false), index(0), remainingNoteTime(0){};
+      : melody(melody), first(true), silence(false), index(0), remainingNoteTime(0), timeUnit(melody.getTimeUnit()){};
     Melody melody;
 
     unsigned short getIndex() const {
@@ -157,6 +157,10 @@ private:
 
     bool isSilence() const {
       return silence;
+    }
+
+    void changeTempo(int newTempo) {
+      timeUnit = (60 * 1000 * 4 / newTempo / 32);
     }
 
     /**
@@ -222,7 +226,7 @@ private:
      */
     NoteDuration getCurrentComputedNote() const {
       NoteDuration note = melody.getNote(getIndex());
-      note.duration = melody.getTimeUnit() * note.duration;
+      note.duration = timeUnit * note.duration;
       // because the fixed point notation
       note.duration /= 2;
       return note;
@@ -232,6 +236,7 @@ private:
     bool first;
     bool silence;
     unsigned short index;
+    unsigned short timeUnit;
 
     /**
      * Variable to support precise pauses and move/duplicate melodies between Players.
